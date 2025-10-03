@@ -9,7 +9,11 @@ function adicionarProduto(&$estoque)
 	$codigo = intval(trim(readline("Digite o CÓDIGO: ")));
 	if (encontrarPosicaoPeloCodigo($estoque, $codigo) !== false) {
 		echo PHP_EOL . "O código $codigo inserido já está em uso!" . PHP_EOL;
-		return;
+
+		while (encontrarPosicaoPeloCodigo($estoque, $codigo) !== false) {
+			$codigo++;
+		}
+		echo PHP_EOL . "CODIGO ALTERADO PARA: $codigo" . PHP_EOL;
 	}
 
 	$nome = trim(readline("Digite o NOME: "));
