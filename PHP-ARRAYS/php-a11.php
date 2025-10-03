@@ -72,9 +72,18 @@ function verificarEstoque($estoque)
 		switch ($input) {
 			case '1':
 				echo PHP_EOL;
-				$produtoString = trim(readline("Digite o nome do produto: "));
-				echo $produtoString . PHP_EOL;
-				$posiçaoProduto = array_search($produtoString, array_column($estoque, "nome"));
+				$produtoString = trim(strtolower(readline("Digite o nome do produto: ")));
+
+				$posiçaoProduto = array_search( //encontra a posição de "produtoString" ou retorna false
+					$produtoString,
+					array_map(		// retorna o array com os nomes em letra minuscula
+						function ($itemDaLista) {
+							return mb_strtolower($itemDaLista["nome"], "UTF-8");
+						},
+						$estoque
+					)
+				);
+
 				if ($posiçaoProduto === false) {
 					echo PHP_EOL . "Produto não encontrado!" . PHP_EOL;
 					break;
