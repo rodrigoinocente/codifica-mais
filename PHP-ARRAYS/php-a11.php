@@ -58,7 +58,7 @@ function venderProduto(&$estoque)
 
 	if ($estoque[$posiçaoProduto]["quantidade"] == 0) {
 		echo PHP_EOL . "O item ({$estoque[$posiçaoProduto]["nome"]}) teve sua quantidade zerada e foi REMOVIDO do estoque." . PHP_EOL;
-		unset($estoque[$posiçaoProduto]);
+		unset($estoque[$posiçaoProduto]); //função retira o produto porem não mantem a integridade do indice associativo!
 	}
 	echo PHP_EOL . "VENDA REALIZADA COM SUCESSO!!!" . PHP_EOL;
 }
@@ -151,9 +151,15 @@ function exibirProduto($produto)
 
 function encontrarPosicaoPeloCodigo($estoque, $codigo)
 {
-	return array_search($codigo, array_column($estoque, "codigo"));
-	//array_column fará um array com os valores da chave "codigo" contidos em $estoque
-	//array_search se tiver sucesso irá retorna o indice(int), caso contrario será bool(false) do array montado por array_column
+	return array_search( //array_search se tiver sucesso irá retorna o indice(int), caso contrario será bool(false) do array montado por array_map
+		$codigo,
+		array_map( //array_map fará um array com os valores da chave (mantendo o indice) "codigo" contidos em $estoque
+			function ($itemDaLista) {
+				return $itemDaLista["codigo"];
+			},
+			$estoque
+		)
+	);
 }
 
 function exibirMenu($estoque)
