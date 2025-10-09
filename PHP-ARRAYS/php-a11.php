@@ -172,7 +172,7 @@ function atualizarProduto(&$estoque)
 			$propriedadeSelecionada = strtolower($prop);
 			break;
 		}
-	}
+	} //TODO: DRY -^ na linha 219
 
 	if (empty($propriedadeSelecionada)) {
 		echo PHP_EOL . "NENHUMA PROPRIEDADE FOI SELECIONADA!" . PHP_EOL;
@@ -189,6 +189,49 @@ function atualizarProduto(&$estoque)
 	echo PHP_EOL . "=== PRODUTO ATUALIZADO COM SUCESSO! ===" . PHP_EOL;
 	exibirProduto($estoque[$posiçaoProduto]);
 	echo "=====================================" . PHP_EOL;
+}
+
+function filtrarProdutos($estoque)
+{
+	echo PHP_EOL . "=== Filtrar Produto ===" . PHP_EOL;
+	echo "Digite \"sim\" para selecionar a propriedade que deseja filtrar." . PHP_EOL;
+	$propriedadesLista = ["NOME", "TAMANHO", "COR", "QUANTIDADE"];
+	foreach ($propriedadesLista as $prop) {
+		$input = trim(strtolower(readline("Atualizar $prop? ")));
+		if ($input == "sim") {
+			$propriedadeSelecionada = strtolower($prop);
+			break;
+		}
+	}
+	if (empty($propriedadeSelecionada)) {
+		echo PHP_EOL . "NENHUMA PROPRIEDADE FOI SELECIONADA!" . PHP_EOL;
+		return;
+	}
+
+	$valor = trim(readline("Digite o valor para o filtro: "));
+	if (empty($valor)) {
+		echo PHP_EOL . "VALOR NÃO INSERIDO. FILTRO NÃO REALIZADO!" . PHP_EOL;
+		return;
+	}
+
+	$arr = array_filter($estoque, function ($prod) use ($propriedadeSelecionada, $valor) {
+		if ($propriedadeSelecionada == "quantidade") {
+			return $prod[$propriedadeSelecionada] == $valor;
+		}
+		return strtolower($prod[$propriedadeSelecionada]) == strtolower($valor);
+	});
+	if (empty($arr)) {
+		echo PHP_EOL . "NADA FOI LOCALIZADO!" . PHP_EOL;
+		return;
+	}
+
+	echo PHP_EOL . ">>>> PRODUTOS LOCALIZADOS <<<<" . PHP_EOL;
+	foreach ($arr as $produto) {
+		echo PHP_EOL . "-------------------" . PHP_EOL;
+		exibirProduto($produto);
+		echo "-------------------" . PHP_EOL;
+	}
+	echo PHP_EOL . "==============================" . PHP_EOL;
 }
 
 function encontrarPosicaoPeloCodigo($estoque, $codigo)
@@ -214,7 +257,8 @@ function exibirMenu($estoque)
 		echo "(3) Verificar o estoque" . PHP_EOL;
 		echo "(4) Listar o estoque" . PHP_EOL;
 		echo "(5) Atualizar o estoque" . PHP_EOL;
-		echo "(6) Sair" . PHP_EOL;
+		echo "(6) Filtrar estoque" . PHP_EOL;
+		echo "(7) Sair" . PHP_EOL;
 		echo "==================================" . PHP_EOL;
 
 		$input = readline("Escolha a opção desejada: ");
@@ -241,6 +285,10 @@ function exibirMenu($estoque)
 				break;
 
 			case '6':
+				filtrarProdutos($estoque);
+				break;
+
+			case '7':
 				echo "Saindo..." . PHP_EOL;
 				exit();
 				break;
