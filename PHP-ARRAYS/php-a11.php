@@ -149,6 +149,48 @@ function exibirProduto($produto)
 	echo "Quantidade: {$produto["quantidade"]}" . PHP_EOL;
 }
 
+function atualizarProduto(&$estoque)
+{
+	echo PHP_EOL . "=== Atualizar Produto ===" . PHP_EOL;
+	$codigo = intval(trim(readline("Digite o CÓDIGO: ")));
+
+	$posiçaoProduto = encontrarPosicaoPeloCodigo($estoque, $codigo);
+	if ($posiçaoProduto === false) {
+		echo PHP_EOL . "PRODUTO NÃO ENCONTRADO" . PHP_EOL;
+		return;
+	}
+
+	echo PHP_EOL . ">>>> Produto Selecionado <<<<" . PHP_EOL;
+	exibirProduto($estoque[$posiçaoProduto]);
+	echo "=============================" . PHP_EOL . PHP_EOL;
+
+	echo "Digite \"sim\" para selecionar a propriedade desejada!" . PHP_EOL;
+	$propriedadesLista = ["NOME", "TAMANHO", "COR", "QUANTIDADE"];
+	foreach ($propriedadesLista as $prop) {
+		$input = trim(strtolower(readline("Atualizar $prop? ")));
+		if ($input == "sim") {
+			$propriedadeSelecionada = strtolower($prop);
+			break;
+		}
+	}
+
+	if (empty($propriedadeSelecionada)) {
+		echo PHP_EOL . "NENHUMA PROPRIEDADE FOI SELECIONADA!" . PHP_EOL;
+		return;
+	}
+
+	$novoValor = trim(readline("Digite o novo valor da propriedade: "));
+	if (empty($novoValor)) {
+		echo PHP_EOL . "NOVO VALOR NÃO INSERIDO. ATUALIZAÇÃO NÃO REALIZADA!" . PHP_EOL;
+		return;
+	}
+
+	$estoque[$posiçaoProduto][$propriedadeSelecionada] = $novoValor;
+	echo PHP_EOL . "=== PRODUTO ATUALIZADO COM SUCESSO! ===" . PHP_EOL;
+	exibirProduto($estoque[$posiçaoProduto]);
+	echo "=====================================" . PHP_EOL;
+}
+
 function encontrarPosicaoPeloCodigo($estoque, $codigo)
 {
 	return array_search( //array_search se tiver sucesso irá retorna o indice(int), caso contrario será bool(false) do array montado por array_map
@@ -171,7 +213,8 @@ function exibirMenu($estoque)
 		echo "(2) Remover um produto" . PHP_EOL;
 		echo "(3) Verificar o estoque" . PHP_EOL;
 		echo "(4) Listar o estoque" . PHP_EOL;
-		echo "(5) Sair" . PHP_EOL;
+		echo "(5) Atualizar o estoque" . PHP_EOL;
+		echo "(6) Sair" . PHP_EOL;
 		echo "==================================" . PHP_EOL;
 
 		$input = readline("Escolha a opção desejada: ");
@@ -194,6 +237,10 @@ function exibirMenu($estoque)
 				break;
 
 			case '5':
+				atualizarProduto($estoque);
+				break;
+
+			case '6':
 				echo "Saindo..." . PHP_EOL;
 				exit();
 				break;
