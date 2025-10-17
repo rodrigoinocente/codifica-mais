@@ -1,0 +1,101 @@
+body {
+	font-family: Rubik, sans-serif;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	background-color: #242831;
+	font-weight: 500;
+}
+
+* {
+	margin: 0;
+	box-sizing: border-box;
+	padding: 0;
+}
+
+#card {
+	background-color: aliceblue;
+	width: 35rem;
+	max-width: 100%;
+	border-radius: 8px;
+}
+
+#head {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+	padding: 2rem 1.2rem 1rem 1.2rem;
+}
+
+#top {
+	display: flex;
+	gap: 1rem;
+
+	img {
+		border-radius: 15px;
+		border: 2px solid black;
+		height: 5.5rem;
+	}
+}
+
+#info {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 5px;
+	font-size: 1.2rem;
+
+	p:nth-child(1) {
+		color: rgb(35, 98, 233);
+	}
+
+	p:nth-child(2) {
+		color: rgb(116, 112, 112);
+	}
+
+	p:nth-child(3) {
+		color: rgb(59, 57, 57);
+	}
+}
+
+#tempo {
+	#barra {
+		height: 1.1rem;
+		background-color: rgb(228, 226, 226);
+		border-radius: 5px;
+		z-index: 2;
+
+		#progresso {
+			width: 70%;
+			background: rgb(7 123 255);
+			height: 1.1rem;
+			border-radius: 5px 0 0 5px;
+		}
+	}
+}
+
+#contagem {
+	display: flex;
+	justify-content: space-between;
+	margin-top: .6rem;
+
+	p:nth-child(1) {
+		color: rgb(59, 57, 57);
+	}
+
+	p:nth-child(2) {
+		color: rgb(116, 112, 112);
+	}
+}
+
+#footer {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+	padding: 1rem 1.5rem;
+	color: rgb(61, 61, 61);
+	background-color: rgba(75, 73, 73, 0.13);
+	font-size: 1.3rem;	
+}
