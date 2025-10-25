@@ -1,0 +1,10 @@
+INSERT INTO produtos VALUES ('11', '1', 'macarrão', 'o melhor', 'alimentício', 20.00, 5, CURDATE(), NULL, NULL);
+INSERT INTO produtos VALUES ('12', '1', 'feijão', 'carioca, paulista, baiano', 'alimentício', 30.00, 5, CURDATE(), NULL, NULL);
+INSERT INTO produtos VALUES ('13', '2', 'cabo usb', 'china', 'tecnologia', 15.34, 6, CURDATE(), NULL, NULL);
+INSERT INTO produtos VALUES ('14', '2', 'monitor', 'paraguai', 'tecnologia', 100.05, 4, CURDATE(), NULL, NULL);
+INSERT INTO produtos VALUES ('15', '3', 'perfume', 'cheiroso', 'cosmetico', 20.10, 7, CURDATE(), NULL, NULL);
+INSERT INTO produtos VALUES ('16', '3', 'hidrante', 'maracuja', 'cosmetico', 70.56, 5, CURDATE(), NULL, NULL);
+INSERT INTO produtos VALUES ('17', '4', 'escultura', 'barro', 'variedades', 200.34, 8, CURDATE(), NULL, NULL);
+INSERT INTO produtos VALUES ('18', '4', 'vaso', 'metal', 'variedades', 120.00, 20, CURDATE(), NULL, NULL);
+INSERT INTO produtos VALUES ('19', '5', 'boné', 'verde', 'acessorios', 250.00, 3, CURDATE(), NULL, NULL);
+INSERT INTO produtos VALUES ('20', '5', 'chinelo', 'amarelo', 'acessorios', 60.00, 6, CURDATE(), NULL, NULL);
