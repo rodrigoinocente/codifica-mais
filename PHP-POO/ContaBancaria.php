@@ -59,12 +59,3 @@ class ContaBancaria
     return $valor;
   }
 }
-
-// $conta = new ContaBancaria('Juliana Santos', 1, 500);
-// $conta->depositar(100);
-
-// // para testar o tratamento
-// $conta->sacar(5000);
-
-// $conta->sacar(50);
-// echo "Saldo: R$ " . $conta->verSaldo(), PHP_EOL;
