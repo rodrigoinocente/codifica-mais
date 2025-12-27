@@ -1,0 +1,1 @@
+O servidor inicia com "php -S localhost:8000 -t public" 
