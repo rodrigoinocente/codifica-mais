@@ -1,0 +1,137 @@
+#principal {
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  margin-bottom: 3rem;
+  width: 70vw;
+  /* --tamanho-base: 60vw; */
+  /* width: var(--tamanho-base); */
+}
+
+#titulo {
+  text-align: center;
+  font-size: 2.3rem;
+  font-weight: bold;
+  padding: 1rem;
+}
+
+#tabela_header {
+  background-color: #cfd9cb;
+  font-weight: bold;
+  border-radius: 8px 8px 0 0;
+  border-bottom: 2px solid #ddd;
+  font-size: 1.2rem;
+  position: sticky;
+  top: 0;
+  /* width: 100%; */
+  /* width: calc(var(--tamanho-base) - 2vw); */
+  margin-top: 1rem;
+  text-align: center;
+}
+
+#tabela_header,
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) 1px;
+  gap: 15px;
+  align-items: center;
+  padding: 12px 15px;
+}
+
+
+#card_content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: .7rem;
+}
+
+.card {
+  border: 1px solid #bdbdbd;
+  border-radius: 8px;
+}
+
+.card:hover {
+  background: #e3dede6f;
+}
+
+.card_item p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+#nome {
+  text-align: start;
+}
+
+.card_acao {
+  position: relative;
+  width: 2rem;
+  margin-right: -2rem;
+}
+
+.tresPontos {
+  position: absolute;
+  font-size: 2rem;
+  text-align: center;
+  top: -25px;
+  right: 20px;
+  cursor: pointer;
+}
+
+.mini_modal {
+  display: none;
+  position: absolute;
+  background-color: #edf0ec;
+  padding: 0;
+}
+
+.mini_modal section {
+  text-align: end;
+  padding: 7px 7px 0 0;
+  font-size: .9rem;
+  cursor: pointer;
+}
+
+.mini_modal a {
+  color: black;
+  border-radius: 8px;
+  padding: 3px 10px;
+  text-align: center;
+  margin: 0 3px;
+  
+}
+
+.mini_modal a:hover {
+  background-color: #bec4be;
+}
+
+.ativar_mini_modal {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: -24px;
+  right: 10px;
+  font-size: 1.3rem;
+  border-radius: 8px;
+  padding-bottom: .7rem;
+  border: 1px solid #abd3a8;
+  box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+}
+
+.recuperar {
+  background-color: #285c1a;
+  padding: 6px 10px;
+  border-radius: 8px;
+  position: absolute;
+  right: 90px;
+  font-size: 1.1rem;
+}
+
+.recuperar:hover {
+  background-color: #5f975c;
+}
