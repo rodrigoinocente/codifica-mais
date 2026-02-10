@@ -1,0 +1,119 @@
+#ajuste {
+  margin: 0 auto;
+  padding: 0 4rem;
+}
+
+#ajuste h1 {
+  font-size: 3rem;
+  text-align: center;
+  margin-top: 2rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+#principal {
+  column-width: 400px;
+  margin: 2rem 4rem;
+}
+
+.propriedade {
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  border-radius: 8px;
+  padding: 10px;
+  display: inline-block;
+  width: 100%;
+  margin: 20px;
+  margin-bottom: 5px;
+  font-size: 1.4rem;
+}
+
+.propiedade_nome {
+  padding: 0 10px;
+  font-size: 1.7rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.card_conteudo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  /* font-size: 1.3rem; */
+
+}
+
+.ativados_card {
+  border: 2px solid #6367624b;
+  padding: .5rem;
+  margin-top: 10px;
+  border-radius: 8px;
+  padding-top: 15px;
+  position: relative;
+  /* font-size: 1.4rem; */
+}
+
+.ativados {
+  color: white;
+  background: #157c0b;
+  padding: 5px;
+  border-radius: 8px;
+  font-weight: bold;
+  position: absolute;
+  top: -15px;
+  font-size: .8rem;
+}
+
+.excluir, .recuperar {
+  cursor: pointer;
+  color: black;
+}
+
+.sistema {
+  padding: 5px;
+  background-color: #dcdce7;
+  border-radius: 10px;
+  align-self: flex-end;
+}
+
+.card_status {
+  display: flex;
+  justify-content: space-between;
+  gap: .5rem;
+  align-items: center;
+  /* margin-bottom: 8px; */
+  padding: 3px 10px;
+}
+
+.card_status:hover {
+  background-color: #b8cdb6a1;
+  border-radius: 8px;
+}
+
+.card_status h3 {
+  font-size: 1.2rem;
+}
+
+.excluidos_card {
+  border: 2px solid #6367624b;
+  padding: .5rem;
+  margin-top: 10px;
+  border-radius: 8px;
+  padding-top: 15px;
+  position: relative;
+}
+
+.excluidos {
+  color: white;
+  background: #d81414;
+  padding: 5px;
+  border-radius: 8px;
+  font-weight: bold;
+  position: absolute;
+  top: -15px;
+  font-size: .8rem;
+}
+
+.mensagem_vazia {
+  color: #636762;
+  text-align: center;
+}

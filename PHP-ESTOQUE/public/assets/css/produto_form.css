@@ -1,0 +1,87 @@
+#principal {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  padding: .5rem 1.5rem 1.5rem 1.5rem;
+  margin-top: 3rem;
+  margin-bottom: 2rem;
+  height: fit-content;
+  width: 30rem;
+  border-radius: 8px;
+}
+
+#titulo {
+  text-align: center;
+  margin: 1rem 0;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form_item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form_item label {
+  color: #0d5e0b;
+  font-size: 1.3rem;
+}
+
+.form_item input,
+select {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #888b88;
+  background-color: #fff;
+  font-size: 1.1rem;
+}
+
+.form_item textarea {
+  border-radius: 8px;
+  padding: 5px;
+}
+
+#footer_form {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 2rem;
+}
+
+#footer_form button {
+  width: fit-content;
+  padding: 8px 14px;
+  background-color: #10a924;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-size: 1.3rem;
+}
+
+#footer_form button:hover {
+  background-color: #245228;
+}
+
+#footer_form a {
+  color: #888b88;
+  border: 1px solid #888b88;
+  border-radius: 8px;
+  padding: 8px 14px;
+  width: fit-content;
+  cursor: pointer;
+  align-self: center;
+  justify-self: center;
+  font-size: 1.3rem;
+}
+
+#footer_form a:hover {
+  background-color: #f0f0f0;
+}
