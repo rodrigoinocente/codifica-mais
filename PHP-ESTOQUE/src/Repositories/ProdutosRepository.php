@@ -134,8 +134,7 @@ class ProdutosRepository
       $sql =
           "SELECT * FROM produtos 
           WHERE id = :produtoId 
-          AND usuario_id = :usuarioId 
-          AND deletado_em IS NULL";
+          AND usuario_id = :usuarioId";
 
       $stmt = $this->db->prepare($sql);
       $stmt->bindValue(':usuarioId', $usuarioId, PDO::PARAM_INT);
@@ -232,21 +231,18 @@ class ProdutosRepository
 
     public function recuperarProduto(int $produtoId, int $usuarioId): bool
     {
-        try {
-            $sql = "UPDATE produtos 
-                SET deletado_em = NULL 
-                WHERE id = :produtoId 
-                AND usuario_id = :usuarioId";
+      $sql =
+        "UPDATE produtos 
+        SET deletado_em = NULL 
+        WHERE id = :produtoId 
+        AND usuario_id = :usuarioId";
 
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                'produtoId' => $produtoId,
-                'usuarioId' => $usuarioId
-            ]);
+      $stmt = $this->db->prepare($sql);
+      $stmt->execute([
+          'produtoId' => $produtoId,
+          'usuarioId' => $usuarioId
+      ]);
 
-            return $stmt->rowCount() > 0;
-        } catch (\PDOException $e) {
-            throw new \Exception("Erro ao recuperar o produto.");
-        }
+      return $stmt->rowCount() > 0;
     }
 }

@@ -120,23 +120,27 @@ class ProdutosController
       }
   }
 
-
-    public function recuperarProduto($produtoId)
+    public function recuperarProduto($produtoId): void
     {
-        try {
-            $usuarioId = $_SESSION['usuario']['id'];
+      try {
+        $usuarioId = $_SESSION['usuario']['id'];
 
-            $repoProduto = new ProdutosRepository();
-            $repoProduto->recuperarProduto($produtoId, $usuarioId);
-
-            $_SESSION["mensagem_flash"] = "Pruduto recuperado com sucesso.";
-
-            header("Location: " . $this->router->generate("produtos-excluidos"));
-            return;
-        } catch (\Throwable $e) {
-            $_SESSION["mensagem_erro_flash"] = $e->getMessage();
-            header("Location: " . $this->router->generate("cadastro-propriedade"));
-            return;
+        $produtoValido = $this->serviceProduto->verificarDominioProduto($produtoId, $usuarioId);
+        if ($produtoValido['erro']) {
+          $_SESSION["mensagem_erro_flash"] = $produtoValido['mensagem'];
+          header("Location: " . $this->router->generate("produtos-excluidos"));
+          return;
         }
+
+        $this->repoProduto->recuperarProduto($produtoId, $usuarioId);
+
+        $_SESSION["mensagem_flash"] = "Pruduto recuperado com sucesso.";
+        header("Location: " . $this->router->generate("produtos-excluidos"));
+        return;
+      } catch (\Exception $e) {
+        $_SESSION["mensagem_erro_flash"] = "Tivemos um erro. Tente novamente.";
+        header("Location: " . $this->router->generate("produtos-excluidos"));
+        return;
+      }
     }
 }
