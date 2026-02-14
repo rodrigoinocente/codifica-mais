@@ -4,9 +4,7 @@ namespace App\Repositories;
 
 use App\Database\ConnectionDB;
 use App\Models\Generos;
-use Exception;
 use PDO;
-use PDOException;
 
 class GenerosRepository
 {
@@ -19,26 +17,19 @@ class GenerosRepository
 
     public function existeNomeGenero($nome, $usuarioId): bool
     {
-        try {
-            $sql = "SELECT EXISTS (
-            SELECT 1
-            FROM generos
-            WHERE LOWER(nome) = LOWER(:nome)
-            AND (usuario_id = :usuarioId OR usuario_id IS NULL)
-            AND deletado_em IS NULL
-        )";
+      $stmt = $this->db->prepare(
+        "SELECT EXISTS (
+                SELECT 1
+                FROM generos
+                WHERE LOWER(nome) = LOWER(:nome)
+                AND (usuario_id = :usuarioId OR usuario_id IS NULL))");
 
-            $stmt = $this->db->prepare($sql);
+      $stmt->execute([
+          "nome" => trim($nome),
+          "usuarioId" => $usuarioId
+      ]);
 
-            $stmt->execute([
-                "nome" => trim($nome),
-                "usuarioId" => $usuarioId
-            ]);
-
-            return (bool) $stmt->fetchColumn();
-        } catch (\PDOException $e) {
-            throw new \Exception("Erro na verificação: " . $e->getMessage());
-        }
+      return (bool) $stmt->fetchColumn();
     }
 
     public function salvar(Generos $genero): bool
@@ -85,7 +76,6 @@ class GenerosRepository
               FROM generos
               WHERE id = :id
               AND (usuario_id = :usuarioId OR usuario_id IS NULL)
-              AND deletado_em IS NULL
               LIMIT 1");
 
       $stmt->execute([
@@ -114,40 +104,32 @@ class GenerosRepository
         }
     }
 
-    public function excluirGenero($generoId, $usuarioId)
+    public function excluirGenero($generoId, $usuarioId): bool
     {
-        try {
-            $sql = "UPDATE generos 
-                SET deletado_em = NOW() 
-                WHERE id = :generoId 
-                AND usuario_id = :usuarioId";
+      $sql = "UPDATE generos 
+          SET deletado_em = NOW() 
+          WHERE id = :generoId 
+          AND usuario_id = :usuarioId";
 
-            $stmt = $this->db->prepare($sql);
-            return $stmt->execute([
-                'generoId' => $generoId,
-                'usuarioId' => $usuarioId
-            ]);
-        } catch (\PDOException $e) {
-            throw new \Exception("Ocorreu um erro ao excluir o gênero");
-        }
+      $stmt = $this->db->prepare($sql);
+      return $stmt->execute([
+        'generoId' => $generoId,
+        'usuarioId' => $usuarioId
+      ]);
     }
 
-    public function repucperarGenero($generoId, $usuarioId)
+    public function recuperarGenero($generoId, $usuarioId): bool
     {
-        try {
-            $sql = "UPDATE generos 
-                SET deletado_em = NULL
-                WHERE id = :generoId 
-                AND usuario_id = :usuarioId";
+      $sql = "UPDATE generos 
+          SET deletado_em = NULL
+          WHERE id = :generoId 
+          AND usuario_id = :usuarioId";
 
-            $stmt = $this->db->prepare($sql);
-            return $stmt->execute([
-                'generoId' => $generoId,
-                'usuarioId' => $usuarioId
-            ]);
-        } catch (\PDOException $e) {
-            throw new \Exception("Ocorreu um erro ao excluir o gênero");
-        }
+      $stmt = $this->db->prepare($sql);
+      return $stmt->execute([
+        'generoId' => $generoId,
+        'usuarioId' => $usuarioId
+      ]);
     }
 
 }
