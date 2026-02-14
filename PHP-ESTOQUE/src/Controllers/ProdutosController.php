@@ -66,25 +66,35 @@ class ProdutosController
 
     public function atualizarProduto(): void
     {
-        try {
-            $usuarioId = (int) $_SESSION['usuario']['id'];
-            $produto = new Produtos($usuarioId, ...$_POST);
+      try {
+        $usuarioId = (int) $_SESSION['usuario']['id'];
 
-            $serviceProduto = new ProdutoService();
-            $serviceProduto->validarProduto($produto, $usuarioId);
-
-            $repoProduto = new ProdutosRepository;
-            $repoProduto->atualizar($produto);
-
-            $_SESSION['mensagem_flash'] = "Produto atualizado com sucesso.";
-            header("Location: /dashboard");
-            return;
-        } catch (\Exception $e) {
-            $_SESSION["mensagem_erro_flash"] = $e->getMessage();
-            header("Location: " . $this->router->generate("atualizar-produtoForm", ["produtoId" => $_POST['id']]));
-            return;
+        $produto = new Produtos($usuarioId, ...$_POST);
+        $produtoValidado = $produto->ehDadosValidos();
+        if ($produtoValidado['erro']) {
+          $_SESSION["mensagem_erro_flash"] = $produtoValidado['mensagem'];
+          header("Location: " . $this->router->generate("cadastro-produto"));
+          return;
         }
-    }
+
+        $propriedadeValidas = $this->serviceProduto->verificarDominioPropriedades($produto, $usuarioId);
+        if ($propriedadeValidas['erro']) {
+          $_SESSION["mensagem_erro_flash"] = $propriedadeValidas['mensagem'];
+          header("Location: " . $this->router->generate("atualizar-produtoForm", ["produtoId" => $_POST['id']]));
+          return;
+        }
+
+        $this->repoProduto->atualizar($produto);
+
+        $_SESSION['mensagem_flash'] = "Produto atualizado com sucesso.";
+        header("Location: " . $this->router->generate("dashboard"));
+        return;
+      } catch (\Exception $e) {
+        $_SESSION["mensagem_erro_flash"] = "Tivemos um erro. Tente novamente.";
+        header("Location: " . $this->router->generate("atualizar-produtoForm", ["produtoId" => $_POST['id']]));
+        return;
+      }
+  }
 
     public function deletarProduto($produtoId)
     {

@@ -13,6 +13,36 @@ use DomainException;
 
 class ProdutoService
 {
+  private CategoriasRepository $repoCategorias;
+  private MarcasRepository $repoMarcas;
+  private CoresRepository $repoCores;
+  private TamanhosRepository $repoTamanhos;
+  private GenerosRepository $repoGenero;
+  private SegmentosRepository $repoSegmentos;
+  public function __construct() {
+    $this->repoCategorias = new CategoriasRepository();
+    $this->repoMarcas = new MarcasRepository();
+    $this->repoCores = new CoresRepository();
+    $this->repoTamanhos = new TamanhosRepository();
+    $this->repoGenero = new GenerosRepository();
+    $this->repoSegmentos = new SegmentosRepository();
+  }
+
+  public function verificarDominioPropriedades(Produtos $produto, int $usuarioId): array
+  {
+    $categoria = $this->repoCategorias->existeIdCategoria($produto->categoria_id, $usuarioId);
+    $marca = $this->repoMarcas->existeIdMarca($produto->marca_id, $usuarioId);
+    $cor = $this->repoCores->existeIdCor($produto->cor_id,$usuarioId);
+    $tamanho = $this->repoTamanhos->existeIdTamanho($produto->tamanho_id, $usuarioId);
+    $genero = $this->repoGenero->existeIdGenero($produto->genero_id, $usuarioId);
+    $segmentos = $this->repoSegmentos->existeIdSegmento($produto->segmento_id, $usuarioId);
+
+    if (!$categoria || !$marca || !$cor || !$tamanho || !$genero || !$segmentos) {
+      return ['erro' => true, 'mensagem' => 'Tivemos erros ao tentar localizar as propriedades.'];
+    }
+
+    return ['erro' => false, 'mensagem' => null];
+  }
     public function verificarDados($usuarioId): array
     {
       //TODO: AJUSAR FUNÇÕES

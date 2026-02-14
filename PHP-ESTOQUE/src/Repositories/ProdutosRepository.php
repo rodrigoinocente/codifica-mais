@@ -4,9 +4,7 @@ namespace App\Repositories;
 
 use App\Database\ConnectionDB;
 use App\Models\Produtos;
-use Exception;
 use PDO;
-use PDOException;
 
 class ProdutosRepository
 {
@@ -152,40 +150,36 @@ class ProdutosRepository
 
     public function atualizar(Produtos $produto): bool
     {
-        try {
-            $sql = "UPDATE produtos 
-                    SET 
-                    nome = :nome, 
-                    quantidade = :quantidade, 
-                    descricao = :descricao, 
-                    marca_id = :marca_id, 
-                    cor_id = :cor_id, 
-                    categoria_id = :categoria_id, 
-                    tamanho_id = :tamanho_id, 
-                    genero_id = :genero_id, 
-                    segmento_id = :segmento_id,
-                    atualizado_em = NOW()
-                    WHERE id = :id 
-                    AND usuario_id = :usuario_id";
+      $sql = "UPDATE produtos 
+              SET 
+              nome = :nome, 
+              quantidade = :quantidade, 
+              descricao = :descricao, 
+              marca_id = :marca_id, 
+              cor_id = :cor_id, 
+              categoria_id = :categoria_id, 
+              tamanho_id = :tamanho_id, 
+              genero_id = :genero_id, 
+              segmento_id = :segmento_id,
+              atualizado_em = NOW()
+              WHERE id = :id 
+              AND usuario_id = :usuario_id";
 
-            $stmt = $this->db->prepare($sql);
+      $stmt = $this->db->prepare($sql);
 
-            $stmt->bindValue(':id', $produto->id, \PDO::PARAM_INT);
-            $stmt->bindValue(':usuario_id', $produto->usuario_id, \PDO::PARAM_INT);
-            $stmt->bindValue(':nome', $produto->nome, \PDO::PARAM_STR);
-            $stmt->bindValue(':quantidade', $produto->quantidade, \PDO::PARAM_INT);
-            $stmt->bindValue(':descricao', $produto->descricao ?? null, \PDO::PARAM_STR);
-            $stmt->bindValue(':marca_id', $produto->marca_id, \PDO::PARAM_INT);
-            $stmt->bindValue(':cor_id', $produto->cor_id, \PDO::PARAM_INT);
-            $stmt->bindValue(':categoria_id', $produto->categoria_id, \PDO::PARAM_INT);
-            $stmt->bindValue(':tamanho_id', $produto->tamanho_id, \PDO::PARAM_INT);
-            $stmt->bindValue(':genero_id', $produto->genero_id, \PDO::PARAM_INT);
-            $stmt->bindValue(':segmento_id', $produto->segmento_id, \PDO::PARAM_INT);
+      $stmt->bindValue(':id', $produto->id, \PDO::PARAM_INT);
+      $stmt->bindValue(':usuario_id', $produto->usuario_id, \PDO::PARAM_INT);
+      $stmt->bindValue(':nome', $produto->nome, \PDO::PARAM_STR);
+      $stmt->bindValue(':quantidade', $produto->quantidade, \PDO::PARAM_INT);
+      $stmt->bindValue(':descricao', $produto->descricao ?? null, \PDO::PARAM_STR);
+      $stmt->bindValue(':marca_id', $produto->marca_id, \PDO::PARAM_INT);
+      $stmt->bindValue(':cor_id', $produto->cor_id, \PDO::PARAM_INT);
+      $stmt->bindValue(':categoria_id', $produto->categoria_id, \PDO::PARAM_INT);
+      $stmt->bindValue(':tamanho_id', $produto->tamanho_id, \PDO::PARAM_INT);
+      $stmt->bindValue(':genero_id', $produto->genero_id, \PDO::PARAM_INT);
+      $stmt->bindValue(':segmento_id', $produto->segmento_id, \PDO::PARAM_INT);
 
-            return $stmt->execute();
-        } catch (\Throwable $e) {
-            throw new \Exception("Erro ao atualizar o produto.");
-        }
+      return $stmt->execute();
     }
 
     public function deletar(int $produtoId, int $usuarioId): bool

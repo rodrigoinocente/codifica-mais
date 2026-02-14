@@ -80,24 +80,20 @@ class GenerosRepository
 
     public function existeIdGenero($id, $usuarioId): bool
     {
-        try {
-            $stmt = $this->db->prepare("SELECT EXISTS
-            (SELECT 1
-            FROM generos
-            WHERE id = :id
-            AND (usuario_id = :usuarioId OR usuario_id IS NULL)
-            AND deletado_em IS NULL
-            )");
+      $stmt = $this->db->prepare(
+      "SELECT 1
+              FROM generos
+              WHERE id = :id
+              AND (usuario_id = :usuarioId OR usuario_id IS NULL)
+              AND deletado_em IS NULL
+              LIMIT 1");
 
-            $stmt->execute([
-                "id" => trim($id),
-                "usuarioId" => $usuarioId
-            ]);
+      $stmt->execute([
+        "id" => $id,
+        "usuarioId" => $usuarioId
+      ]);
 
-            return (bool) $stmt->fetchColumn();
-        } catch (\PDOException $e) {
-            throw new \Exception("Ocorreu um erro de verificaçao.");
-        }
+      return (bool) $stmt->fetchColumn();
     }
 
     public function buscaCompletaPorUsuario(int $usuarioId): array
