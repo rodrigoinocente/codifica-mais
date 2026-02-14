@@ -26,10 +26,11 @@ class Tamanhos
         $this->deletado_em = $deletado_em;
     }
 
-    public function ehvalido()
+    public function ehvalido(): array
     {
-        if (empty($this->nome) || mb_strlen($this->nome) < 1) {
-            throw new Exception("Tamanho inválido. É preciso ter mais que 3 dígitos");
-        }
+      if (empty($this->nome) || mb_strlen($this->nome) < 1) {
+        return ['erro' => true, 'mensagem' => 'Campo nome deve ter menos que 3 caracteres'];
+      }
+      return ['erro' => false, 'mensagem' => null];
     }
 }
