@@ -4,9 +4,7 @@ namespace App\Repositories;
 
 use App\Database\ConnectionDB;
 use App\Models\Segmentos;
-use Exception;
 use PDO;
-use PDOException;
 
 class SegmentosRepository
 {
@@ -19,42 +17,33 @@ class SegmentosRepository
 
     public function existeNomeSegmento($nome, $usuarioId): bool
     {
-        try {
-            $stmt = $this->db->prepare("SELECT EXISTS
-            (SELECT 1
-            FROM segmentos
-            WHERE LOWER(nome) = LOWER(:nome)
-            AND (usuario_id = :usuarioId OR usuario_id IS NULL)
-            AND deletado_em IS NULL
-            )");
+      $stmt = $this->db->prepare(
+      "SELECT 1
+              FROM segmentos
+              WHERE LOWER(nome) = LOWER(:nome)
+              AND (usuario_id = :usuarioId OR usuario_id IS NULL)
+              ");
 
-            $stmt->execute([
-                "nome" => trim($nome),
-                "usuarioId" => $usuarioId
-            ]);
+      $stmt->execute([
+        "nome" => trim($nome),
+        "usuarioId" => $usuarioId
+      ]);
 
-            return (bool) $stmt->fetchColumn();
-        } catch (\PDOException $e) {
-            throw new \Exception("Ocorreu um erro de verificaçao.");
-        }
+      return (bool) $stmt->fetchColumn();
     }
 
     public function salvar(Segmentos $segmentos): bool
     {
-        try {
-            $sql = "INSERT INTO segmentos (usuario_id, nome) VALUES (:usuario_id, :nome)";
-            $stmt = $this->db->prepare($sql);
+      $sql = "INSERT INTO segmentos (usuario_id, nome) VALUES (:usuario_id, :nome)";
+      $stmt = $this->db->prepare($sql);
 
-            $stmt->bindValue(":usuario_id", $segmentos->usuario_id);
-            $stmt->bindValue(":nome", $segmentos->nome);
+      $stmt->bindValue(":usuario_id", $segmentos->usuario_id);
+      $stmt->bindValue(":nome", $segmentos->nome);
 
-            return $stmt->execute([
-                ":usuario_id" => $segmentos->usuario_id,
-                ":nome" => $segmentos->nome,
-            ]);
-        } catch (\PDOException $e) {
-            throw new \Exception("Ocorreu um erro ao criar o Segmento.");
-        }
+      return $stmt->execute([
+          ":usuario_id" => $segmentos->usuario_id,
+          ":nome" => $segmentos->nome,
+      ]);
     }
 
     public function buscarTodasPorUsuario(int $usuarioId): array
@@ -83,7 +72,6 @@ class SegmentosRepository
               FROM segmentos
               WHERE id = :id
               AND (usuario_id = :usuarioId OR usuario_id IS NULL)
-              AND deletado_em IS NULL
               LIMIT 1");
 
       $stmt->execute([
@@ -112,39 +100,31 @@ class SegmentosRepository
         }
     }
 
-    public function excluirSegmento($segmentoId, $usuarioId)
+    public function excluirSegmento($segmentoId, $usuarioId): bool
     {
-        try {
-            $sql = "UPDATE segmentos 
-                SET deletado_em = NOW() 
-                WHERE id = :segmentoId 
-                AND usuario_id = :usuarioId";
+      $sql = "UPDATE segmentos 
+          SET deletado_em = NOW() 
+          WHERE id = :segmentoId 
+          AND usuario_id = :usuarioId";
 
-            $stmt = $this->db->prepare($sql);
-            return $stmt->execute([
-                'segmentoId' => $segmentoId,
-                'usuarioId' => $usuarioId
-            ]);
-        } catch (\PDOException $e) {
-            throw new \Exception("Ocorreu um erro ao excluir o segmento");
-        }
+      $stmt = $this->db->prepare($sql);
+      return $stmt->execute([
+        'segmentoId' => $segmentoId,
+        'usuarioId' => $usuarioId
+      ]);
     }
 
-    public function recuperarSegmento($segmentoId, $usuarioId)
+    public function recuperarSegmento($segmentoId, $usuarioId): bool
     {
-        try {
-            $sql = "UPDATE segmentos 
-                SET deletado_em = NULL
-                WHERE id = :segmentoId 
-                AND usuario_id = :usuarioId";
+      $sql = "UPDATE segmentos 
+          SET deletado_em = NULL
+          WHERE id = :segmentoId 
+          AND usuario_id = :usuarioId";
 
-            $stmt = $this->db->prepare($sql);
-            return $stmt->execute([
-                'segmentoId' => $segmentoId,
-                'usuarioId' => $usuarioId
-            ]);
-        } catch (\PDOException $e) {
-            throw new \Exception("Ocorreu um erro ao excluir o segmento");
-        }
+      $stmt = $this->db->prepare($sql);
+      return $stmt->execute([
+        'segmentoId' => $segmentoId,
+        'usuarioId' => $usuarioId
+      ]);
     }
 }

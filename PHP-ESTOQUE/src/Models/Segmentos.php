@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use Exception;
-
 class Segmentos
 {
     public int $usuario_id;
@@ -28,8 +26,9 @@ class Segmentos
 
     public function ehvalido()
     {
-        if (empty($this->nome) || mb_strlen($this->nome) < 3) {
-            throw new Exception("Segmento inválido. É preciso ter mais que 3 dígitos");
-        }
+      if (empty($this->nome) || mb_strlen($this->nome) < 3) {
+        return ['erro' => true, 'mensagem' => 'Campo nome deve ter menos que 3 caracteres'];
+      }
+      return ['erro' => false, 'mensagem' => null];
     }
 }
