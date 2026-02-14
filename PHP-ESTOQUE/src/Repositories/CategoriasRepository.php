@@ -4,9 +4,7 @@ namespace App\Repositories;
 
 use App\Database\ConnectionDB;
 use App\Models\Categorias;
-use Exception;
 use PDO;
-use PDOException;
 
 class CategoriasRepository
 {
@@ -19,42 +17,34 @@ class CategoriasRepository
 
     public function exiteNomeCategoria($nome, $usuarioId): bool
     {
-        try {
-            $stmt = $this->db->prepare("SELECT EXISTS
-            (SELECT 1
-            FROM categorias
-            WHERE LOWER(nome) = LOWER(:nome)
-            AND usuario_id = :usuarioId
-            AND deletado_em IS NULL
-            )");
+      $stmt = $this->db->prepare(
+        "SELECT 1
+                FROM categorias
+                WHERE LOWER(nome) = LOWER(:nome)
+                AND usuario_id = :usuarioId
+                AND deletado_em IS NULL
+                ");
 
-            $stmt->execute([
-                "nome" => trim($nome),
-                "usuarioId" => $usuarioId
-            ]);
+      $stmt->execute([
+        "nome" => trim($nome),
+        "usuarioId" => $usuarioId
+      ]);
 
-            return (bool) $stmt->fetchColumn();
-        } catch (\PDOException $e) {
-            throw new \Exception("Ocorreu um erro de verificaçao.");
-        }
+      return (bool) $stmt->fetchColumn();
     }
 
     public function salvar(Categorias $categoria): bool
     {
-        try {
-            $sql = "INSERT INTO categorias (usuario_id, nome) VALUES (:usuario_id, :nome)";
-            $stmt = $this->db->prepare($sql);
+      $sql = "INSERT INTO categorias (usuario_id, nome) VALUES (:usuario_id, :nome)";
+      $stmt = $this->db->prepare($sql);
 
-            $stmt->bindValue(":usuario_id", $categoria->usuario_id);
-            $stmt->bindValue(":nome", $categoria->nome);
+      $stmt->bindValue(":usuario_id", $categoria->usuario_id);
+      $stmt->bindValue(":nome", $categoria->nome);
 
-            return $stmt->execute([
-                ":usuario_id"  => $categoria->usuario_id,
-                ":nome" => $categoria->nome,
-            ]);
-        } catch (\PDOException $e) {
-            throw new \Exception("Ocorreu um erro ao criar a categoria.");
-        }
+      return $stmt->execute([
+          ":usuario_id"  => $categoria->usuario_id,
+          ":nome" => $categoria->nome,
+      ]);
     }
 
     public function buscarTodasPorUsuario(int $usuarioId): array
@@ -83,7 +73,6 @@ class CategoriasRepository
               FROM categorias
               WHERE id = :id
               AND usuario_id = :usuarioId
-              AND deletado_em IS NULL
               LIMIT 1");
 
       $stmt->execute([
@@ -112,39 +101,31 @@ class CategoriasRepository
         }
     }
 
-    public function excluirCategoria($categoriaId, $usuarioId)
+    public function excluirCategoria($categoriaId, $usuarioId): bool
     {
-        try {
-            $sql = "UPDATE categorias 
-                SET deletado_em = NOW() 
-                WHERE id = :categoriaId 
-                AND usuario_id = :usuarioId";
+      $sql = "UPDATE categorias 
+          SET deletado_em = NOW() 
+          WHERE id = :categoriaId 
+          AND usuario_id = :usuarioId";
 
-            $stmt = $this->db->prepare($sql);
-            return $stmt->execute([
-                'categoriaId' => $categoriaId,
-                'usuarioId' => $usuarioId
-            ]);
-        } catch (\PDOException $e) {
-            throw new \Exception("Ocorreu um erro ao excluir a categoria");
-        }
+      $stmt = $this->db->prepare($sql);
+      return $stmt->execute([
+          'categoriaId' => $categoriaId,
+          'usuarioId' => $usuarioId
+      ]);
     }
 
-    public function recuperarCategoria($categoriaId, $usuarioId)
+    public function recuperarCategoria($categoriaId, $usuarioId): bool
     {
-        try {
-            $sql = "UPDATE categorias 
-                SET deletado_em = NULL
-                WHERE id = :categoriaId 
-                AND usuario_id = :usuarioId";
+      $sql = "UPDATE categorias 
+          SET deletado_em = NULL
+          WHERE id = :categoriaId 
+          AND usuario_id = :usuarioId";
 
-            $stmt = $this->db->prepare($sql);
-            return $stmt->execute([
-                'categoriaId' => $categoriaId,
-                'usuarioId' => $usuarioId
-            ]);
-        } catch (\PDOException $e) {
-            throw new \Exception("Ocorreu um erro ao excluir a categoria");
-        }
+      $stmt = $this->db->prepare($sql);
+      return $stmt->execute([
+          'categoriaId' => $categoriaId,
+          'usuarioId' => $usuarioId
+      ]);
     }
 }
