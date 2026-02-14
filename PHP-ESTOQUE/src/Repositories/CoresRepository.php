@@ -19,42 +19,33 @@ class CoresRepository
 
     public function ExisteNomeCor($nome, $usuarioId): bool
     {
-        try {
-            $stmt = $this->db->prepare("SELECT EXISTS
-            (SELECT 1
-            FROM cores
-            WHERE LOWER(nome) = LOWER(:nome)
-            AND (usuario_id = :usuarioId OR usuario_id IS NULL)
-            AND deletado_em IS NULL
-            )");
+      $stmt = $this->db->prepare(
+        "SELECT 1
+                FROM cores
+                WHERE LOWER(nome) = LOWER(:nome)
+                AND (usuario_id = :usuarioId OR usuario_id IS NULL)
+                ");
 
-            $stmt->execute([
-                "nome" => trim($nome),
-                "usuarioId" => $usuarioId
-            ]);
+      $stmt->execute([
+        "nome" => trim($nome),
+        "usuarioId" => $usuarioId
+      ]);
 
-            return (bool) $stmt->fetchColumn();
-        } catch (\PDOException $e) {
-            throw new \Exception("Ocorreu um erro de verificaçao.");
-        }
+      return (bool) $stmt->fetchColumn();
     }
 
     public function salvar(Cores $cor): bool
     {
-        try {
-            $sql = "INSERT INTO cores (usuario_id, nome) VALUES (:usuario_id, :nome)";
-            $stmt = $this->db->prepare($sql);
+      $sql = "INSERT INTO cores (usuario_id, nome) VALUES (:usuario_id, :nome)";
+      $stmt = $this->db->prepare($sql);
 
-            $stmt->bindValue(":usuario_id", $cor->usuario_id);
-            $stmt->bindValue(":nome", $cor->nome);
+      $stmt->bindValue(":usuario_id", $cor->usuario_id);
+      $stmt->bindValue(":nome", $cor->nome);
 
-            return $stmt->execute([
-                ":usuario_id"  => $cor->usuario_id,
-                ":nome" => $cor->nome,
-            ]);
-        } catch (\PDOException $e) {
-            throw new \Exception("Ocorreu um erro ao criar a cor.");
-        }
+      return $stmt->execute([
+          ":usuario_id"  => $cor->usuario_id,
+          ":nome" => $cor->nome,
+      ]);
     }
 
     public function buscarTodasPorUsuario(int $usuarioId): array
@@ -83,7 +74,6 @@ class CoresRepository
                 FROM cores
                 WHERE id = :id
                 AND (usuario_id = :usuarioId OR usuario_id IS NULL)
-                AND deletado_em IS NULL
                 LIMIT 1");
 
         $stmt->execute([
@@ -112,39 +102,31 @@ class CoresRepository
         }
     }
 
-    public function excluirCor($corId, $usuarioId)
+    public function excluirCor($corId, $usuarioId): bool
     {
-        try {
-            $sql = "UPDATE cores 
-                SET deletado_em = NOW() 
-                WHERE id = :corId 
-                AND usuario_id = :usuarioId";
+      $sql = "UPDATE cores 
+          SET deletado_em = NOW() 
+          WHERE id = :corId 
+          AND usuario_id = :usuarioId";
 
-            $stmt = $this->db->prepare($sql);
-            return $stmt->execute([
-                'corId' => $corId,
-                'usuarioId' => $usuarioId
-            ]);
-        } catch (\PDOException $e) {
-            throw new \Exception("Ocorreu um erro ao excluir a cor");
-        }
+      $stmt = $this->db->prepare($sql);
+      return $stmt->execute([
+        'corId' => $corId,
+        'usuarioId' => $usuarioId
+      ]);
     }
 
     public function recuperarCor($corId, $usuarioId)
     {
-        try {
-            $sql = "UPDATE cores 
-                SET deletado_em = NULL
-                WHERE id = :corId 
-                AND usuario_id = :usuarioId";
+      $sql = "UPDATE cores 
+          SET deletado_em = NULL
+          WHERE id = :corId 
+          AND usuario_id = :usuarioId";
 
-            $stmt = $this->db->prepare($sql);
-            return $stmt->execute([
-                'corId' => $corId,
-                'usuarioId' => $usuarioId
-            ]);
-        } catch (\PDOException $e) {
-            throw new \Exception("Ocorreu um erro ao excluir a cor");
-        }
-    }
+      $stmt = $this->db->prepare($sql);
+      return $stmt->execute([
+        'corId' => $corId,
+        'usuarioId' => $usuarioId
+      ]);
+  }
 }
