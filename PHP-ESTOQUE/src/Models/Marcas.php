@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use Exception;
-
 class Marcas
 {
     public int $usuario_id;
@@ -26,10 +24,11 @@ class Marcas
         $this->deletado_em = $deletado_em;
     }
 
-    public function ehvalido()
+    public function ehvalido(): array
     {
-        if (empty($this->nome) || mb_strlen($this->nome) < 3) {
-            throw new Exception("Marca inválida. É preciso ter mais que 3 dígitos");
-        }
+      if (empty($this->nome) || mb_strlen($this->nome) < 3) {
+        return ['erro' => true, 'mensagem' => 'Campo nome deve ter menos que 3 caracteres'];
+      }
+      return ['erro' => false, 'mensagem' => null];
     }
 }
