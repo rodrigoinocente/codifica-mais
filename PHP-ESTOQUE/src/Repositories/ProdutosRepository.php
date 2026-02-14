@@ -41,60 +41,56 @@ class ProdutosRepository
 
     public function salvar(Produtos $produtos): bool
     {
-        try {
-            $sql = "INSERT INTO produtos (
-            usuario_id, 
-            marca_id, 
-            cor_id, 
-            categoria_id, 
-            tamanho_id, 
-            genero_id, 
-            segmento_id, 
-            nome, 
-            quantidade, 
-            descricao
-            ) 
-            VALUES (
-            :usuario_id, 
-            :marca_id, 
-            :cor_id, 
-            :categoria_id, 
-            :tamanho_id, 
-            :genero_id, 
-            :segmento_id, 
-            :nome, 
-            :quantidade, 
-            :descricao
-            )";
+        $sql = "INSERT INTO produtos (
+        usuario_id, 
+        marca_id, 
+        cor_id, 
+        categoria_id, 
+        tamanho_id, 
+        genero_id, 
+        segmento_id, 
+        nome, 
+        quantidade, 
+        descricao
+        ) 
+        VALUES (
+        :usuario_id, 
+        :marca_id, 
+        :cor_id, 
+        :categoria_id, 
+        :tamanho_id, 
+        :genero_id, 
+        :segmento_id, 
+        :nome, 
+        :quantidade, 
+        :descricao
+        )";
 
-            $stmt = $this->db->prepare($sql);
+        $stmt = $this->db->prepare($sql);
 
-            $stmt->bindValue(":usuario_id", $produtos->usuario_id);
-            $stmt->bindValue(":marca_id", $produtos->marca_id);
-            $stmt->bindValue(":cor_id", $produtos->cor_id);
-            $stmt->bindValue(":categoria_id", $produtos->categoria_id);
-            $stmt->bindValue(":tamanho_id", $produtos->tamanho_id);
-            $stmt->bindValue(":genero_id", $produtos->genero_id);
-            $stmt->bindValue(":segmento_id", $produtos->segmento_id);
-            $stmt->bindValue(":nome", $produtos->nome);
-            $stmt->bindValue(":quantidade", $produtos->quantidade);
-            $stmt->bindValue(":descricao", $produtos->descricao);
+        $stmt->bindValue(":usuario_id", $produtos->usuario_id);
+        $stmt->bindValue(":marca_id", $produtos->marca_id);
+        $stmt->bindValue(":cor_id", $produtos->cor_id);
+        $stmt->bindValue(":categoria_id", $produtos->categoria_id);
+        $stmt->bindValue(":tamanho_id", $produtos->tamanho_id);
+        $stmt->bindValue(":genero_id", $produtos->genero_id);
+        $stmt->bindValue(":segmento_id", $produtos->segmento_id);
+        $stmt->bindValue(":nome", $produtos->nome);
+        $stmt->bindValue(":quantidade", $produtos->quantidade);
+        $stmt->bindValue(":descricao", $produtos->descricao);
 
-            return $stmt->execute([
-                ":usuario_id" => $produtos->usuario_id,
-                ":marca_id" => $produtos->marca_id,
-                ":cor_id" => $produtos->cor_id,
-                ":categoria_id" => $produtos->categoria_id,
-                ":tamanho_id" => $produtos->tamanho_id,
-                ":genero_id" => $produtos->genero_id,
-                ":segmento_id" => $produtos->segmento_id,
-                ":nome" => $produtos->nome,
-                ":quantidade" => $produtos->quantidade,
-                ":descricao" => $produtos->descricao,
-            ]);
-        } catch (\PDOException $e) {
-            throw new \Exception("Ocorreu um erro ao criar a cor.");
-        }
+        return $stmt->execute([
+            ":usuario_id" => $produtos->usuario_id,
+            ":marca_id" => $produtos->marca_id,
+            ":cor_id" => $produtos->cor_id,
+            ":categoria_id" => $produtos->categoria_id,
+            ":tamanho_id" => $produtos->tamanho_id,
+            ":genero_id" => $produtos->genero_id,
+            ":segmento_id" => $produtos->segmento_id,
+            ":nome" => $produtos->nome,
+            ":quantidade" => $produtos->quantidade,
+            ":descricao" => $produtos->descricao,
+        ]);
     }
 
     public function buscarProdutos(int $usuarioId, int $limite = 100, int $offset = 0): array

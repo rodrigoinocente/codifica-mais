@@ -9,51 +9,62 @@ use App\Service\ProdutoService;
 
 class ProdutosController
 {
-    private $router;
+    private AltoRouter $router;
+    private ProdutoService $serviceProduto;
+    private ProdutosRepository $repoProduto;
 
     public function __construct(AltoRouter $router)
     {
-        $this->router = $router;
+      $this->router = $router;
+      $this->serviceProduto = new ProdutoService;
+      $this->repoProduto = new ProdutosRepository;
     }
 
-    public function cadastrar()
+    public function cadastrar(): void
     {
-        try {
-            $usuarioId = $_SESSION['usuario']['id'];
-            $produto = new Produtos(
-                $usuarioId,
-                (int) $_POST['marca_id'],
-                (int) $_POST['cor_id'],
-                (int) $_POST['categoria_id'],
-                (int) $_POST['tamanho_id'],
-                (int) $_POST['genero_id'],
-                (int) $_POST['segmento_id'],
-                $_POST['nome'],
-                (int)$_POST['quantidade'],
-                $_POST['descricao'],
-            );
+      try {
+        $usuarioId = $_SESSION['usuario']['id'];
+        $produto = new Produtos(
+          $usuarioId,
+          (int) $_POST['marca_id'],
+          (int) $_POST['cor_id'],
+          (int) $_POST['categoria_id'],
+          (int) $_POST['tamanho_id'],
+          (int) $_POST['genero_id'],
+          (int) $_POST['segmento_id'],
+          $_POST['nome'],
+          (int)$_POST['quantidade'],
+          $_POST['descricao'],
+        );
 
-            $produto->ehvalido();
-
-            $serviceProduto = new ProdutoService();
-            $serviceProduto->validarProduto($produto, $usuarioId);
-
-            $repoProduto = new ProdutosRepository;
-            $repoProduto->salvar($produto);
-
-            $_SESSION['mensagem_flash'] = "Produto cadastrado com sucesso.";
-            header("Location: /dashboard");
-            return;
-        } catch (\Exception $e) {
-            $_SESSION["mensagem_erro_flash"] = $e->getMessage();
-            header("Location: " . $this->router->generate("cadastro-produto"));
-            return;
+        $produtoValidado = $produto->ehDadosValidos();
+        if ($produtoValidado['erro']) {
+          $_SESSION["mensagem_erro_flash"] = $produtoValidado['mensagem'];
+          header("Location: " . $this->router->generate("cadastro-produto"));
+          return;
         }
+
+        $propriedadeValidas = $this->serviceProduto->validarPropriedades($produto, $usuarioId);
+        if ($propriedadeValidas ['erro']) {
+          $_SESSION["mensagem_erro_flash"] = $propriedadeValidas['mensagem'];
+          header("Location: " . $this->router->generate("cadastro-produto"));
+          return;
+        }
+
+        $this->repoProduto->salvar($produto);
+
+        $_SESSION['mensagem_flash'] = "Produto cadastrado com sucesso.";
+        header("Location: /dashboard");
+        return;
+      }catch (\Exception $e) {
+        $_SESSION['mensagem_erro_flash'] = "Tivemos um erro. Tente novamente.";
+        header("Location: " . $this->router->generate("cadastro-produto"));
+        return;
+      }
+
     }
 
-
-
-    public function atualizarProduto()
+    public function atualizarProduto(): void
     {
         try {
             $usuarioId = (int) $_SESSION['usuario']['id'];

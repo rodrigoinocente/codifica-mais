@@ -50,26 +50,31 @@ class Produtos
         $this->deletado_em = $deletado_em;
     }
 
-    public function ehvalido()
+    public function ehDadosValidos(): array
     {
         if (empty($this->nome) || mb_strlen($this->nome) < 3) {
-            throw new Exception("Nome inválido. É preciso ter mais que 3 dígitos");
+            return ['erro' => true, 'mensagem' => 'Nome inválido. É preciso ter mais que 3 dígitos.'];
         }
 
         if (
-            !is_int($this->usuario_id) || $this->usuario_id <= 0 ||
-            !is_int($this->marca_id) || $this->marca_id <= 0 ||
-            !is_int($this->cor_id) || $this->cor_id <= 0 ||
-            !is_int($this->categoria_id) || $this->categoria_id <= 0 ||
-            !is_int($this->tamanho_id) || $this->tamanho_id <= 0 ||
-            !is_int($this->genero_id) || $this->genero_id <= 0 ||
-            !is_int($this->segmento_id) || $this->segmento_id <= 0
+            $this->marca_id <= 0 ||
+            $this->cor_id <= 0 ||
+            $this->categoria_id <= 0 ||
+            $this->tamanho_id <= 0 ||
+            $this->genero_id <= 0 ||
+            $this->segmento_id <= 0
         ) {
-            throw new Exception("Algum Id está incorreto.");
+            return ['erro' => true, 'mensagem' => 'Erro na verificação dos dados.'];
+        }
+
+        if ($this->usuario_id <= 0) {
+            return ['erro' => true, 'mensagem' => 'Usuário inválido'];
         }
 
         if ($this->quantidade <= 0) {
-            throw new Exception("A quantidade não pode ser menor ou igual a 0");
+            return ['erro' => true, 'mensagem' => 'A quantidade não pode ser menor ou igual a 0.'];
         }
+
+        return ['erro' => false, 'mensagem' => null];
     }
 }
