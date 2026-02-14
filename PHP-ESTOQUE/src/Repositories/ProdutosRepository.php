@@ -131,21 +131,17 @@ class ProdutosRepository
     }
     public function buscarPorId(int $produtoId, int $usuarioId)
     {
-        try {
-            $sql = "SELECT * FROM produtos 
-                WHERE id = :produtoId 
-                AND usuario_id = :usuarioId 
-                AND deletado_em IS NULL";
+      $sql =
+          "SELECT * FROM produtos 
+          WHERE id = :produtoId 
+          AND usuario_id = :usuarioId 
+          AND deletado_em IS NULL";
 
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':usuarioId', $usuarioId, PDO::PARAM_INT);
-            $stmt->bindValue(':produtoId', $produtoId, PDO::PARAM_INT);
-            $stmt->execute();
-
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) {
-            throw new \Exception("Erro ao buscar produtos paginados.");
-        }
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindValue(':usuarioId', $usuarioId, PDO::PARAM_INT);
+      $stmt->bindValue(':produtoId', $produtoId, PDO::PARAM_INT);
+      $stmt->execute();
+      return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function atualizar(Produtos $produto): bool
@@ -184,22 +180,19 @@ class ProdutosRepository
 
     public function deletar(int $produtoId, int $usuarioId): bool
     {
-        try {
-            $sql = "UPDATE produtos 
-                SET deletado_em = NOW() 
-                WHERE id = :produtoId 
-                AND usuario_id = :usuarioId";
+      $sql =
+        "UPDATE produtos 
+        SET deletado_em = NOW() 
+        WHERE id = :produtoId 
+        AND usuario_id = :usuarioId";
 
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                'produtoId' => $produtoId,
-                'usuarioId' => $usuarioId
-            ]);
+      $stmt = $this->db->prepare($sql);
+      $stmt->execute([
+        'produtoId' => $produtoId,
+        'usuarioId' => $usuarioId
+      ]);
 
-            return $stmt->rowCount() > 0;
-        } catch (\PDOException $e) {
-            throw new \Exception("Erro ao deletar o produto.");
-        }
+      return $stmt->rowCount() > 0;
     }
 
     public function buscarProdutosExcluidos(int $usuarioId, int $limite = 100, int $offset = 0): array

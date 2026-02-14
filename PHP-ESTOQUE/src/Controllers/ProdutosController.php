@@ -96,24 +96,29 @@ class ProdutosController
       }
   }
 
-    public function deletarProduto($produtoId)
+    public function deletarProduto($produtoId): void
     {
-        try {
-            $usuarioId = $_SESSION['usuario']['id'];
+      try {
+        $usuarioId = $_SESSION['usuario']['id'];
 
-            $repoProduto = new ProdutosRepository();
-            $repoProduto->deletar($produtoId, $usuarioId);
-
-            $_SESSION["mensagem_flash"] = "Pruduto deletado com sucesso.";
-
-            header("Location: /dashboard");
-            return;
-        } catch (\Throwable $e) {
-            $_SESSION["mensagem_erro_flash"] = $e->getMessage();
-            header("Location: " . $this->router->generate("cadastro-propriedade"));
-            return;
+        $produtoValido = $this->serviceProduto->verificarDominioProduto($produtoId, $usuarioId);
+        if ($produtoValido['erro']) {
+          $_SESSION["mensagem_erro_flash"] = $produtoValido['mensagem'];
+          header("Location: " . $this->router->generate("dashboard"));
+          return;
         }
-    }
+
+        $this->repoProduto->deletar($produtoId, $usuarioId);
+
+        $_SESSION["mensagem_flash"] = "Pruduto deletado com sucesso.";
+        header("Location: /dashboard");
+        return;
+      } catch (\Exception $e) {
+        $_SESSION["mensagem_erro_flash"] = "Tivemos um erro. Tente novamente.";
+        header("Location: " . $this->router->generate("dashboard"));
+        return;
+      }
+  }
 
 
     public function recuperarProduto($produtoId)

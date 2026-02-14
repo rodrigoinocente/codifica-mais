@@ -7,12 +7,14 @@ use App\Repositories\CategoriasRepository;
 use App\Repositories\CoresRepository;
 use App\Repositories\GenerosRepository;
 use App\Repositories\MarcasRepository;
+use App\Repositories\ProdutosRepository;
 use App\Repositories\SegmentosRepository;
 use App\Repositories\TamanhosRepository;
 use DomainException;
 
 class ProdutoService
 {
+  private ProdutosRepository $repoProduto;
   private CategoriasRepository $repoCategorias;
   private MarcasRepository $repoMarcas;
   private CoresRepository $repoCores;
@@ -26,6 +28,7 @@ class ProdutoService
     $this->repoTamanhos = new TamanhosRepository();
     $this->repoGenero = new GenerosRepository();
     $this->repoSegmentos = new SegmentosRepository();
+    $this->repoProduto = new ProdutosRepository();
   }
 
   public function verificarDominioPropriedades(Produtos $produto, int $usuarioId): array
@@ -43,6 +46,17 @@ class ProdutoService
 
     return ['erro' => false, 'mensagem' => null];
   }
+
+  public function verificarDominioProduto(int $produtoId, int $usuarioId): array
+  {
+    $produto = $this->repoProduto->buscarPorId($produtoId, $usuarioId);
+    if (!$produto) {
+      return ['erro' => true, 'mensagem' => 'Produto não localizado.'];
+    }
+
+    return ['erro' => false, 'mensagem' => null];
+  }
+
     public function verificarDados($usuarioId): array
     {
       //TODO: AJUSAR FUNÇÕES
