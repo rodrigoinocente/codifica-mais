@@ -42,7 +42,7 @@ CREATE TABLE
   marcas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT,
-    nome VARCHAR(100) NOT NULL UNIQUE,
+    nome VARCHAR(100) NOT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deletado_em TIMESTAMP DEFAULT NULL,
     FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
@@ -61,7 +61,7 @@ CREATE TABLE
 CREATE TABLE
   segmentos (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario_id INT NULL, -- Híbrido: NULL para globais
+    usuario_id INT NULL,
     nome VARCHAR(50) NOT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deletado_em TIMESTAMP DEFAULT NULL,
