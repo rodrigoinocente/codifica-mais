@@ -8,12 +8,12 @@ use PDO;
 
 class UserRepository
 {
-    private PDO $db;
+  private PDO $db;
 
-    public function __construct()
-    {
-        $this->db = ConnectionDB::conectar();
-    }
+  public function __construct()
+  {
+      $this->db = ConnectionDB::conectar();
+  }
 
 //        public function existeId(int $id): bool
 //    {
@@ -27,46 +27,46 @@ class UserRepository
 //        }
 //    }
 
-    public function verificarEmail($email): bool
-    {
-      $stmt = $this->db->prepare(
-        "SELECT 1
-                FROM usuarios
-                WHERE email = :email");
+  public function verificarEmail($email): bool
+  {
+    $stmt = $this->db->prepare(
+      "SELECT 1
+              FROM usuarios
+              WHERE email = :email");
 
-      $stmt->execute(["email" => $email]);
+    $stmt->execute(["email" => $email]);
 
-      return (bool) $stmt->fetchColumn();
-    }
+    return (bool) $stmt->fetchColumn();
+  }
 
-    public function salvar(User $user): int
-    {
-      $sql = "INSERT INTO usuarios (nome, email, senha) VALUES (:nome, :email, :senha)";
-      $stmt = $this->db->prepare($sql);
+  public function salvar(User $user): int
+  {
+    $sql = "INSERT INTO usuarios (nome, email, senha) VALUES (:nome, :email, :senha)";
+    $stmt = $this->db->prepare($sql);
 
-      $stmt->bindValue(":nome", $user->nome);
-      $stmt->bindValue(":email", $user->email);
-      $stmt->bindValue(":senha", $user->senha);
-      $stmt->execute([
-        ":nome"  => $user->nome,
-        ":email" => $user->email,
-        ":senha" => password_hash($user->senha, PASSWORD_BCRYPT)
-      ]);
+    $stmt->bindValue(":nome", $user->nome);
+    $stmt->bindValue(":email", $user->email);
+    $stmt->bindValue(":senha", $user->senha);
+    $stmt->execute([
+      ":nome"  => $user->nome,
+      ":email" => $user->email,
+      ":senha" => password_hash($user->senha, PASSWORD_BCRYPT)
+    ]);
 
-      return $this->db->lastInsertId();
-    }
+    return $this->db->lastInsertId();
+  }
 
-    public function buscarUsuarioPorEmail(string $email): array|false
-    {
-      $stmt = $this->db->prepare(
-        "SELECT * 
-               FROM usuarios 
-               WHERE email = :email 
-               LIMIT 1"
-      );
+  public function buscarUsuarioPorEmail(string $email): array|false
+  {
+    $stmt = $this->db->prepare(
+      "SELECT * 
+             FROM usuarios 
+             WHERE email = :email 
+             LIMIT 1"
+    );
 
-      $stmt->execute(['email' => $email]);
+    $stmt->execute(['email' => $email]);
 
-      return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
 }

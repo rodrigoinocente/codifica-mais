@@ -115,36 +115,30 @@ class ProdutoService
 
     public function validarPropriedades(Produtos $produto, int $usuarioId): array
     {
-        $repoCategoria = new CategoriasRepository();
-        if (!$repoCategoria->existeIdCategoria($produto->categoria_id, $usuarioId)) {
-            return ['erro' => true, 'mensagem' => 'Categoria não localizada.'];
-        }
+      if (!$this->repoCategorias->existeIdCategoria($produto->categoria_id, $usuarioId)) {
+        return ['erro' => true, 'mensagem' => 'Categoria não localizada.'];
+      }
 
-        $repoMarca = new MarcasRepository();
-        if (!$repoMarca->existeIdMarca($produto->marca_id, $usuarioId)) {
-            return ['erro' => true, 'mensagem' => 'Marca não localizada.'];
-        }
+      if (!$this->repoMarcas->existeIdMarca($produto->marca_id, $usuarioId)) {
+        return ['erro' => true, 'mensagem' => 'Marca não localizada.'];
+      }
 
-        $repoCor = new CoresRepository();
-        if (!$repoCor->existeIdCor($produto->cor_id, $usuarioId)) {
-            return ['erro' => true, 'mensagem' => 'Cor não localizada.'];
-        }
+      if (!$this->repoCores->existeIdCor($produto->cor_id, $usuarioId)) {
+        return ['erro' => true, 'mensagem' => 'Cor não localizada.'];
+      }
 
-        $repoTamanho = new TamanhosRepository();
-        if (!$repoTamanho->existeIdTamanho($produto->tamanho_id, $usuarioId)) {
-            return ['erro' => true, 'mensagem' => 'Tamanho não localizado.'];
-        }
+      if (!$this->repoTamanhos->existeIdTamanho($produto->tamanho_id, $usuarioId)) {
+        return ['erro' => true, 'mensagem' => 'Tamanho não localizado.'];
+      }
 
-        $repoGenero = new GenerosRepository();
-        if (!$repoGenero->existeIdGenero($produto->genero_id, $usuarioId)) {
-            return ['erro' => true, 'mensagem' => 'Gênero não localizado.'];
-        }
+      if (!$this->repoGenero->existeIdGenero($produto->genero_id, $usuarioId)) {
+        return ['erro' => true, 'mensagem' => 'Gênero não localizado.'];
+      }
 
-        $repoSegmento = new SegmentosRepository();
-        if (!$repoSegmento->existeIdSegmento($produto->segmento_id, $usuarioId)) {
-            return ['erro' => true, 'mensagem' => 'Segmento não localizado.'];
-        }
+      if (!$this->repoSegmentos->existeIdSegmento($produto->segmento_id, $usuarioId)) {
+        return ['erro' => true, 'mensagem' => 'Segmento não localizado.'];
+      }
 
-        return ['erro' => false, 'mensagem' => null];
+      return ['erro' => false, 'mensagem' => null];
     }
 }

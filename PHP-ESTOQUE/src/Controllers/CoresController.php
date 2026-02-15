@@ -13,8 +13,8 @@ class CoresController
 
   public function __construct(AltoRouter $router)
     {
-        $this->router = $router;
-        $this->repoCores = new CoresRepository();
+      $this->router = $router;
+      $this->repoCores = new CoresRepository();
     }
 
     public function cadastrar(): void
