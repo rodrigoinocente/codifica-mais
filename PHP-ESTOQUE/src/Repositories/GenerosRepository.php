@@ -52,21 +52,17 @@ class GenerosRepository
 
     public function buscarTodasPorUsuario(int $usuarioId): array
     {
-        try {
-            $sql = "SELECT id, nome 
-            FROM generos 
-            WHERE (usuario_id IS NULL OR usuario_id = :usuario_id) 
-            AND deletado_em IS NULL 
-            ORDER BY nome ASC";
+      $sql = "SELECT id, nome 
+      FROM generos 
+      WHERE (usuario_id IS NULL OR usuario_id = :usuario_id) 
+      AND deletado_em IS NULL 
+      ORDER BY nome ASC";
 
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':usuario_id', $usuarioId, PDO::PARAM_INT);
-            $stmt->execute();
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindValue(':usuario_id', $usuarioId, PDO::PARAM_INT);
+      $stmt->execute();
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Throwable $th) {
-            throw new \Exception("Ocorreu um erro ao pesquisar as cores");
-        }
     }
 
     public function existeIdGenero($id, $usuarioId): bool
@@ -86,22 +82,18 @@ class GenerosRepository
       return (bool) $stmt->fetchColumn();
     }
 
-    public function buscaCompletaPorUsuario(int $usuarioId): array
+    public function getTodasPorUsuario(int $usuarioId): array
     {
-        try {
-            $sql = "SELECT *
-            FROM generos 
-            WHERE (usuario_id IS NULL OR usuario_id = :usuario_id) 
-            ORDER BY nome ASC";
+      $sql = "SELECT *
+              FROM generos 
+              WHERE (usuario_id IS NULL OR usuario_id = :usuario_id) 
+              ORDER BY nome ASC";
 
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':usuario_id', $usuarioId, PDO::PARAM_INT);
-            $stmt->execute();
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindValue(':usuario_id', $usuarioId, PDO::PARAM_INT);
+      $stmt->execute();
 
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Throwable $th) {
-            throw new \Exception("Ocorreu um erro ao pesquisar as cores");
-        }
+      return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function excluirGenero($generoId, $usuarioId): bool

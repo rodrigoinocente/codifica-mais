@@ -36,6 +36,12 @@
         <span>Segmento</span>
       </div>
 
+        <?php if (empty($produtos)): ?>
+            <div style="text-align: center; font-size: 2rem; font-weight: bold; margin-top: 2rem">
+                <p> Não há produtos excluídos. </p>
+            </div>
+        <?php endif; ?>
+
       <section id="card_content">
         <?php foreach ($produtos as $produto): ?>
           <div class="card">

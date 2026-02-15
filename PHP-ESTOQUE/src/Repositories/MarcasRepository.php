@@ -79,22 +79,18 @@ class MarcasRepository
 
       return (bool) $stmt->fetchColumn();
     }
-    public function buscaCompletaPorUsuario(int $usuarioId): array
+    public function getTodasPorUsuario(int $usuarioId): array
     {
-        try {
-            $sql = "SELECT *
-            FROM marcas 
-            WHERE (usuario_id IS NULL OR usuario_id = :usuario_id) 
-            ORDER BY nome ASC";
+      $sql = "SELECT *
+              FROM marcas 
+              WHERE (usuario_id IS NULL OR usuario_id = :usuario_id) 
+              ORDER BY nome ASC";
 
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':usuario_id', $usuarioId, PDO::PARAM_INT);
-            $stmt->execute();
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindValue(':usuario_id', $usuarioId, PDO::PARAM_INT);
+      $stmt->execute();
 
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Throwable $th) {
-            throw new \Exception("Ocorreu um erro ao pesquisar as categorias.");
-        }
+      return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
      public function excluirMarca($marcaId, $usuarioId): bool

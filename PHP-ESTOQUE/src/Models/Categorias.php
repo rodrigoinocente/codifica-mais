@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use Exception;
-
 class Categorias
 {
     public int $usuario_id;

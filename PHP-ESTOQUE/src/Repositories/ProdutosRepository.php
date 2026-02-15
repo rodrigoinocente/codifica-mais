@@ -93,41 +93,37 @@ class ProdutosRepository
 
     public function buscarProdutos(int $usuarioId, int $limite = 100, int $offset = 0): array
     {
-        try {
-            $sql = "SELECT 
-                    produtos.id, 
-                    produtos.nome AS nome, 
-                    produtos.quantidade, 
-                    produtos.descricao,
-                    marcas.nome AS marca,
-                    cores.nome AS cor,
-                    categorias.nome AS categoria,
-                    tamanhos.nome AS tamanho,
-                    generos.nome AS genero,
-                    segmentos.nome AS segmento
-                    FROM produtos
-                    JOIN marcas ON produtos.marca_id = marcas.id
-                    JOIN cores ON produtos.cor_id = cores.id
-                    JOIN categorias ON produtos.categoria_id = categorias.id
-                    JOIN tamanhos ON produtos.tamanho_id = tamanhos.id
-                    JOIN generos ON produtos.genero_id = generos.id
-                    JOIN segmentos ON produtos.segmento_id = segmentos.id
-                    WHERE produtos.usuario_id = :usuario_id 
-                    AND produtos.deletado_em IS NULL 
-                    ORDER BY produtos.id DESC
-                    LIMIT :limite 
-                    OFFSET :offset";
+      $sql = "SELECT 
+              produtos.id, 
+              produtos.nome AS nome, 
+              produtos.quantidade, 
+              produtos.descricao,
+              marcas.nome AS marca,
+              cores.nome AS cor,
+              categorias.nome AS categoria,
+              tamanhos.nome AS tamanho,
+              generos.nome AS genero,
+              segmentos.nome AS segmento
+              FROM produtos
+              JOIN marcas ON produtos.marca_id = marcas.id
+              JOIN cores ON produtos.cor_id = cores.id
+              JOIN categorias ON produtos.categoria_id = categorias.id
+              JOIN tamanhos ON produtos.tamanho_id = tamanhos.id
+              JOIN generos ON produtos.genero_id = generos.id
+              JOIN segmentos ON produtos.segmento_id = segmentos.id
+              WHERE produtos.usuario_id = :usuario_id 
+              AND produtos.deletado_em IS NULL 
+              ORDER BY produtos.id DESC
+              LIMIT :limite 
+              OFFSET :offset";
 
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':usuario_id', $usuarioId, PDO::PARAM_INT);
-            $stmt->bindValue(':limite', $limite, PDO::PARAM_INT);
-            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-            $stmt->execute();
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindValue(':usuario_id', $usuarioId, PDO::PARAM_INT);
+      $stmt->bindValue(':limite', $limite, PDO::PARAM_INT);
+      $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+      $stmt->execute();
 
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) {
-            throw new \Exception("Erro ao buscar produtos paginados.");
-        }
+      return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function buscarPorId(int $produtoId, int $usuarioId)
     {
@@ -196,37 +192,33 @@ class ProdutosRepository
 
     public function buscarProdutosExcluidos(int $usuarioId, int $limite = 100, int $offset = 0): array
     {
-        try {
-            $sql = "SELECT 
-                p.id, p.nome, p.quantidade, p.descricao,
-                m.nome AS marca,
-                c.nome AS cor,
-                cat.nome AS categoria,
-                t.nome AS tamanho,
-                g.nome AS genero,
-                s.nome AS segmento
-                FROM produtos p
-                JOIN marcas m ON p.marca_id = m.id
-                JOIN cores c ON p.cor_id = c.id
-                JOIN categorias cat ON p.categoria_id = cat.id
-                JOIN tamanhos t ON p.tamanho_id = t.id
-                JOIN generos g ON p.genero_id = g.id
-                JOIN segmentos s ON p.segmento_id = s.id
-                WHERE p.usuario_id = :usuario_id 
-                AND p.deletado_em IS NOT NULL 
-                ORDER BY p.deletado_em DESC
-                LIMIT :limite OFFSET :offset";
+      $sql = "SELECT 
+          p.id, p.nome, p.quantidade, p.descricao,
+          m.nome AS marca,
+          c.nome AS cor,
+          cat.nome AS categoria,
+          t.nome AS tamanho,
+          g.nome AS genero,
+          s.nome AS segmento
+          FROM produtos p
+          JOIN marcas m ON p.marca_id = m.id
+          JOIN cores c ON p.cor_id = c.id
+          JOIN categorias cat ON p.categoria_id = cat.id
+          JOIN tamanhos t ON p.tamanho_id = t.id
+          JOIN generos g ON p.genero_id = g.id
+          JOIN segmentos s ON p.segmento_id = s.id
+          WHERE p.usuario_id = :usuario_id 
+          AND p.deletado_em IS NOT NULL 
+          ORDER BY p.deletado_em DESC
+          LIMIT :limite OFFSET :offset";
 
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':usuario_id', $usuarioId, \PDO::PARAM_INT);
-            $stmt->bindValue(':limite', $limite, \PDO::PARAM_INT);
-            $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
-            $stmt->execute();
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindValue(':usuario_id', $usuarioId, \PDO::PARAM_INT);
+      $stmt->bindValue(':limite', $limite, \PDO::PARAM_INT);
+      $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+      $stmt->execute();
 
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\PDOException $e) {
-            throw new \Exception("Erro ao buscar produtos paginados.");
-        }
+      return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function recuperarProduto(int $produtoId, int $usuarioId): bool
@@ -239,8 +231,8 @@ class ProdutosRepository
 
       $stmt = $this->db->prepare($sql);
       $stmt->execute([
-          'produtoId' => $produtoId,
-          'usuarioId' => $usuarioId
+        'produtoId' => $produtoId,
+        'usuarioId' => $usuarioId
       ]);
 
       return $stmt->rowCount() > 0;

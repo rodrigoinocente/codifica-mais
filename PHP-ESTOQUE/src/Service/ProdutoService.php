@@ -57,80 +57,58 @@ class ProdutoService
     return ['erro' => false, 'mensagem' => null];
   }
 
-    public function verificarDados($usuarioId): array
+    public function getPropriedadesDisponiveis($usuarioId): array
     {
-      //TODO: AJUSAR FUNÇÕES
-        $repoCategorias = new CategoriasRepository();
-        $categorias = $repoCategorias->buscarTodasPorUsuario($usuarioId);
+      $categorias = $this->repoCategorias->buscarTodasPorUsuario($usuarioId);
+      $marcas = $this->repoMarcas->buscarTodasPorUsuario($usuarioId);
 
-        $repoMarcas = new MarcasRepository();
-        $marcas = $repoMarcas->buscarTodasPorUsuario($usuarioId);
+      if (empty($marcas) || empty($categorias)) {
+        return ['erro' => true, 'mensagem' => 'Para realizar um cadastro, é necessário ter pelo menos uma categoria
+         e uma marca registradas. Acesse Propriedades e faça o registro.'];
+      }
 
-        if (empty($marcas) || empty($categorias)) {
-            throw new DomainException("Para realizar um cadastro, é necessário ter pelo menos uma categoria
-            e uma marca registradas. Acesse Propriedades e faça o registro.");
+      $cores = $this->repoCores->buscarTodasPorUsuario($usuarioId);
+      $generos = $this->repoGenero->buscarTodasPorUsuario($usuarioId);
+      $segmentos = $this->repoSegmentos->buscarTodasPorUsuario($usuarioId);
+      $tamanhos = $this->repoTamanhos->buscarTodasPorUsuario($usuarioId);
+
+      if (empty($cores) || empty($tamanhos) || empty($generos) || empty($segmentos)) {
+        return ['erro' => true, 'mensagem' => 'Alguns dados essenciais (Cores, Tamanhos, Gêneros ou Segmentos) não foram localizados.'];
+      }
+
+      $tamanhosNumericos = [];
+      $tamanhosLetras = [];
+      foreach ($tamanhos as $tamanho) {
+        if (is_numeric($tamanho['nome'])) {
+          $tamanhosNumericos[] = $tamanho;
+        } else {
+          $tamanhosLetras[] = $tamanho;
         }
+      }
 
-        $repoCores = new CoresRepository();
-        $cores = $repoCores->buscarTodasPorUsuario($usuarioId);
-
-        $repoTamanhos = new TamanhosRepository();
-        $tamanhos = $repoTamanhos->buscarTodasPorUsuario($usuarioId);
-
-        $tamanhosNumericos = [];
-        $tamanhosLetras = [];
-
-        foreach ($tamanhos as $tamanho) {
-            if (is_numeric($tamanho['nome'])) {
-                $tamanhosNumericos[] = $tamanho;
-            } else {
-                $tamanhosLetras[] = $tamanho;
-            }
-        }
-
-        $repoGenero = new GenerosRepository();
-        $generos = $repoGenero->buscarTodasPorUsuario($usuarioId);
-
-        $repoSegmentos = new SegmentosRepository();
-        $segmentos = $repoSegmentos->buscarTodasPorUsuario($usuarioId);
-
-        if (empty($cores) || empty($tamanhos) || empty($generos) || empty($segmentos)) {
-            throw new DomainException("Alguns dados essenciais (Cores, Tamanhos, Gêneros ou Segmentos) não foram localizados.");
-        }
-
-        return compact(
-            'categorias',
-            'marcas',
-            'cores',
-            'tamanhosNumericos',
-            'tamanhosLetras',
-            'tamanhos',
-            'generos',
-            'segmentos'
-        );
+      return compact(
+        'categorias',
+        'marcas',
+        'cores',
+        'tamanhosNumericos',
+        'tamanhosLetras',
+        'tamanhos',
+        'generos',
+        'segmentos'
+      );
     }
 
-  public function verificarTodosDados($usuarioId)
+  public function getTodasPropriedades($usuarioId): array
   {
-    $repoCategorias = new CategoriasRepository();
-    $categorias = $repoCategorias->buscaCompletaPorUsuario($usuarioId);
-    $repoMarcas = new MarcasRepository();
-    $marcas = $repoMarcas->buscaCompletaPorUsuario($usuarioId);
+    $categorias = $this->repoCategorias->getTodasPorUsuario($usuarioId);
+    $marcas = $this->repoMarcas->getTodasPorUsuario($usuarioId);
+    $cores = $this->repoCores->getTodasPorUsuario($usuarioId);
+    $tamanhos = $this->repoTamanhos->getTodasPorUsuario($usuarioId);
+    $generos = $this->repoGenero->getTodasPorUsuario($usuarioId);
+    $segmentos = $this->repoSegmentos->getTodasPorUsuario($usuarioId);
 
-    $repoCores = new CoresRepository();
-    $cores = $repoCores->buscaCompletaPorUsuario($usuarioId);
-
-    $repoTamanhos = new TamanhosRepository();
-    $tamanhos = $repoTamanhos->buscaCompletaPorUsuario($usuarioId);
-
-    $repoGenero = new GenerosRepository();
-    $generos = $repoGenero->buscaCompletaPorUsuario($usuarioId);
-
-    $repoSegmentos = new SegmentosRepository();
-    $segmentos = $repoSegmentos->buscaCompletaPorUsuario($usuarioId);
-
-    if (empty($cores) || empty($tamanhos) || empty($generos) || empty($segmentos)) {
-      throw new DomainException("Alguns dados essenciais (Cores, Tamanhos, Gêneros ou Segmentos) não foram localizados.");
+    if (empty($categorias) || empty($marcas) || empty($cores) || empty($tamanhos) || empty($generos) || empty($segmentos)) {
+      return ['erro' => true, 'mensagem' => 'Alguns dados essenciais (Cores, Tamanhos, Gêneros ou Segmentos) não foram localizados.'];
     }
   
     return compact('categorias', 'marcas', 'cores', 'tamanhos', 'generos', 'segmentos');

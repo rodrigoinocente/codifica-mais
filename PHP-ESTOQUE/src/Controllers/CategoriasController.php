@@ -90,6 +90,7 @@ class CategoriasController
 
         $_SESSION["mensagem_flash"] = "Categoria recuperada com sucesso.";
         header("Location: " . $this->router->generate("cadastro-propriedade"));
+        return;
       } catch (\Exception $e) {
         $_SESSION["mensagem_erro_flash"] = "Ocoreu um erro. Tente novamente mais tarde.";
         header("Location: " . $this->router->generate("cadastro-propriedade"));

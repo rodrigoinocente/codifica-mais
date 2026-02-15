@@ -36,7 +36,14 @@
         <span>Segmento</span>
       </div>
 
-      <section id="card_content">
+        <?php if (empty($produtos)): ?>
+            <div style="text-align: center; font-size: 2rem; font-weight: bold; margin-top: 2rem">
+                <p> Não há produtos registrados. </p>
+            </div>
+        <?php endif; ?>
+
+
+        <section id="card_content">
         <?php foreach ($produtos as $produto): ?>
           <div class="card">
             <div class="card_item" id="nome" title="<?= $produto['nome'] ?>">
