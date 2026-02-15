@@ -18,11 +18,6 @@ class LoginController
 
     public function index(): void
     {
-      if (isset($_SESSION["usuario"], $_SESSION["usuario"]["id"], $_SESSION["usuario"]["nome"], $_SESSION["usuario"]["email"] )) {
-        header("Location: " . $this->router->generate('dashboard'));
-        return;
-      }
-
       $erro = $_SESSION["mensagem_erro_flash"] ?? null;
       unset($_SESSION["mensagem_erro_flash"]);
 

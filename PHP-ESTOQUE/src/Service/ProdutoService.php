@@ -106,8 +106,7 @@ class ProdutoService
     $tamanhos = $this->repoTamanhos->getTodasPorUsuario($usuarioId);
     $generos = $this->repoGenero->getTodasPorUsuario($usuarioId);
     $segmentos = $this->repoSegmentos->getTodasPorUsuario($usuarioId);
-
-    if (empty($categorias) || empty($marcas) || empty($cores) || empty($tamanhos) || empty($generos) || empty($segmentos)) {
+    if (empty($cores) || empty($tamanhos) || empty($generos) || empty($segmentos)) {
       return ['erro' => true, 'mensagem' => 'Alguns dados essenciais (Cores, Tamanhos, Gêneros ou Segmentos) não foram localizados.'];
     }
   

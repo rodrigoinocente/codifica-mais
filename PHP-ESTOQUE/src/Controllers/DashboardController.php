@@ -73,7 +73,8 @@ class DashboardController
 
         $dados = $this->serviceProdutos->getPropriedadesDisponiveis($usuarioId);
         if ($dados['erro']) {
-          echo 'Página não localizada'. PHP_EOL;
+          $_SESSION["mensagem_erro_flash"] = $dados['mensagem'];;
+          header("Location: " . $this->router->generate('dashboard'));
           return;
         }
         extract($dados);
@@ -96,16 +97,17 @@ class DashboardController
     {
       try {
         $usuarioId = $_SESSION['usuario']['id'];
-
         $produto = $this->repoProdutos->buscarPorId((int)$produtoId, $usuarioId);
         if (!$produto) {
-          echo 'Página não localizada'. PHP_EOL;
+          $_SESSION["mensagem_erro_flash"] = "Produto não encontrado";;
+          header("Location: " . $this->router->generate('dashboard'));
           return;
         }
 
         $dados = $this->serviceProdutos->getPropriedadesDisponiveis($usuarioId);
         if ($dados['erro']) {
-          echo 'Página não localizada'. PHP_EOL;
+          $_SESSION["mensagem_erro_flash"] = $dados['mensagem'];
+          header("Location: " . $this->router->generate('dashboard'));
           return;
         }
         extract($dados);
