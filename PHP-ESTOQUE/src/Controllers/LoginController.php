@@ -7,62 +7,71 @@ use App\Repositories\UserRepository;
 
 class LoginController
 {
-    private $router;
+    private AltoRouter $router;
+    private UserRepository $repoUsuario;
 
     public function __construct(AltoRouter $router)
     {
-        $this->router = $router;
+      $this->router = $router;
+      $this->repoUsuario = new UserRepository();
     }
 
-    public function index()
+    public function index(): void
     {
-        $erro = $_SESSION["mensagem_erro_flash"] ?? null;
-        unset($_SESSION["mensagem_erro_flash"]);
+      if (isset($_SESSION["usuario"], $_SESSION["usuario"]["id"], $_SESSION["usuario"]["nome"], $_SESSION["usuario"]["email"] )) {
+        header("Location: " . $this->router->generate('dashboard'));
+        return;
+      }
 
-        $mensagem = $_SESSION["mensagem_flash"] ?? null;
-        unset($_SESSION["mensagem_flash"]);
+      $erro = $_SESSION["mensagem_erro_flash"] ?? null;
+      unset($_SESSION["mensagem_erro_flash"]);
 
-        require __DIR__ . '/../Views/login.php';
+      $mensagem = $_SESSION["mensagem_flash"] ?? null;
+      unset($_SESSION["mensagem_flash"]);
+
+      require __DIR__ . '/../Views/login.php';
+      return;
     }
 
-    public function logar()
+    public function logar(): void
     {
-        try {
-            $email = $_POST["email"] ?? "";
-            $senha = $_POST["senha"] ?? "";
+      try {
+        $email = $_POST["email"] ?? "";
+        $senha = $_POST["senha"] ?? "";
 
-            $repo = new UserRepository();
-            $usuario = $repo->buscarUsuarioPorEmail($email);
-            if (!$usuario || !password_verify($senha, $usuario->senha)) {
-                throw new \Exception("E-mail ou senha inválidos.");
-            }
+        $usuario = $this->repoUsuario->buscarUsuarioPorEmail($email);
 
-            session_start();
-            $_SESSION["usuario"] = [
-                "id"    => $usuario->id,
-                "nome"  => $usuario->nome,
-                "email" => $usuario->email
-            ];
-
-            $_SESSION["mensagem_flash"] = "Boas Vindas, $usuario->nome";
-            header("Location: " . $this->router->generate('dashboard'));
-        } catch (\Exception $e) {
-            $_SESSION["mensagem_erro_flash"] = $e->getMessage();
-            header("Location: " . $this->router->generate("cadastro"));
-
-            require __DIR__ . '/../Views/login.php';
+        if (!$usuario || !password_verify($senha, $usuario['senha'])) {
+          $_SESSION["mensagem_erro_flash"] = 'E-mail ou senha inválidos.';
+          header("Location: " . $this->router->generate('login'));
+          return;
         }
+
+        $_SESSION["usuario"] = [
+            "id"    => $usuario['id'],
+            "nome"  => $usuario['nome'],
+            "email" => $usuario['email']
+        ];
+
+        $_SESSION["mensagem_flash"] = "Boas Vindas, {$usuario['nome']}";
+        header("Location: " . $this->router->generate('dashboard'));
+        return;
+      } catch (\Exception $e) {
+        $_SESSION["mensagem_erro_flash"] = "Tivemos um erro. Tente novamente.";
+        require __DIR__ . '/../Views/login.php';
+        return;
+      }
     }
 
-    public function sair()
+    public function sair(): void
     {
-        $_SESSION = [];
-        session_destroy();
+      $_SESSION = [];
+      session_destroy();
 
-        session_start();
-        $_SESSION["mensagem_flash"] = "Você saiu do sistema com sucesso. Volte sempre!";
+      session_start();
+      $_SESSION["mensagem_flash"] = "Você saiu do sistema com sucesso. Volte sempre!";
 
-        header("Location: " . $this->router->generate('login'));
-        exit;
+      header("Location: " . $this->router->generate('login'));
+      return;
     }
 }
