@@ -139,6 +139,22 @@ class ProdutosRepository
       return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+//  public function buscarProdutoExcluidoPorId(int $produtoId, int $usuarioId)
+//  {
+////      dd($produtoId, $usuarioId);
+//    $sql =
+//      "SELECT * FROM produtos
+//          WHERE id = :produtoId
+//          AND usuario_id = :usuarioId
+//          AND deletado_em IS NOT NULL";
+//
+//    $stmt = $this->db->prepare($sql);
+//    $stmt->bindValue(':usuarioId', $usuarioId, PDO::PARAM_INT);
+//    $stmt->bindValue(':produtoId', $produtoId, PDO::PARAM_INT);
+//    $stmt->execute();
+//    return $stmt->fetch(PDO::FETCH_ASSOC);
+//  }
+
     public function atualizar(Produtos $produto): bool
     {
       $sql = "UPDATE produtos 
