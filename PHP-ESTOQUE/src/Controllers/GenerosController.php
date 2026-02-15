@@ -5,6 +5,7 @@ namespace App\Controllers;
 use AltoRouter;
 use App\Models\Generos;
 use App\Repositories\GenerosRepository;
+use App\Service\LogService;
 
 class GenerosController
 {
@@ -44,6 +45,7 @@ class GenerosController
       header("Location: " . $this->router->generate("cadastro-propriedade"));
       return;
     } catch (\Exception $e) {
+      LogService::registrarErro($e);
       $_SESSION["mensagem_erro_flash"] = "Ocoreu um erro. Tente novamente mais tarde.";
       header("Location: " . $this->router->generate("cadastro-propriedade"));
       return;
@@ -68,6 +70,7 @@ class GenerosController
       header("Location: " . $this->router->generate("cadastro-propriedade"));
       return;
     } catch (\Exception $e) {
+      LogService::registrarErro($e);
       $_SESSION["mensagem_erro_flash"] = "Ocoreu um erro. Tente novamente mais tarde.";
       header("Location: " . $this->router->generate("cadastro-propriedade"));
       return;
@@ -92,6 +95,7 @@ class GenerosController
       header("Location: " . $this->router->generate("cadastro-propriedade"));
       return;
     } catch (\Exception $e) {
+      LogService::registrarErro($e);
       $_SESSION["mensagem_erro_flash"] = "Ocoreu um erro. Tente novamente mais tarde.";
       header("Location: " . $this->router->generate("cadastro-propriedade"));
       return;

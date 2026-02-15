@@ -5,6 +5,7 @@ namespace App\Controllers;
 use AltoRouter;
 use App\Models\Segmentos;
 use App\Repositories\SegmentosRepository;
+use App\Service\LogService;
 
 class SegmentosController
 {
@@ -45,6 +46,7 @@ class SegmentosController
       header("Location: " . $this->router->generate("cadastro-propriedade"));
       return;
     } catch (\Exception $e) {
+      LogService::registrarErro($e);
       $_SESSION["mensagem_erro_flash"] = "Ocoreu um erro. Tente novamente mais tarde.";
       header("Location: " . $this->router->generate("cadastro-propriedade"));
       return;
@@ -69,6 +71,7 @@ class SegmentosController
       header("Location: " . $this->router->generate("cadastro-propriedade"));
       return;
     } catch (\Exception $e) {
+      LogService::registrarErro($e);
       $_SESSION["mensagem_erro_flash"] = "Ocoreu um erro. Tente novamente mais tarde.";
       header("Location: " . $this->router->generate("cadastro-propriedade"));
       return;
@@ -93,9 +96,10 @@ class SegmentosController
       header("Location: " . $this->router->generate("cadastro-propriedade"));
       return;
     } catch (\Exception $e) {
+      LogService::registrarErro($e);
       $_SESSION["mensagem_erro_flash"] = "Ocoreu um erro. Tente novamente mais tarde.";
       header("Location: " . $this->router->generate("cadastro-propriedade"));
-        return;
+      return;
     }
   }
 }

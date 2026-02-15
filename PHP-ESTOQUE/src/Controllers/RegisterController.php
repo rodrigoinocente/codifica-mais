@@ -5,6 +5,7 @@ namespace App\Controllers;
 use AltoRouter;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Service\LogService;
 
 class RegisterController
 {
@@ -70,7 +71,8 @@ class RegisterController
       header("Location: " . $this->router->generate("dashboard"));
       return;
     } catch (\Exception $e) {
-      $_SESSION["mensagem_erro_flash"] = $e->getMessage();
+      LogService::registrarErro($e);
+      $_SESSION["mensagem_erro_flash"] = "Ocoreu um erro. Tente novamente mais tarde.";
       header("Location: " . $this->router->generate("cadastro"));
       return;
     }

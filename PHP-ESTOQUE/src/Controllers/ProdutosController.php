@@ -5,6 +5,7 @@ namespace App\Controllers;
 use AltoRouter;
 use App\Models\Produtos;
 use App\Repositories\ProdutosRepository;
+use App\Service\LogService;
 use App\Service\ProdutoService;
 
 class ProdutosController
@@ -57,6 +58,7 @@ class ProdutosController
       header("Location: /dashboard");
       return;
     }catch (\Exception $e) {
+      LogService::registrarErro($e);
       $_SESSION['mensagem_erro_flash'] = "Tivemos um erro. Tente novamente.";
       header("Location: " . $this->router->generate("cadastro-produto"));
       return;
@@ -89,6 +91,7 @@ class ProdutosController
       header("Location: " . $this->router->generate("dashboard"));
       return;
     } catch (\Exception $e) {
+      LogService::registrarErro($e);
       $_SESSION["mensagem_erro_flash"] = "Tivemos um erro. Tente novamente.";
       header("Location: " . $this->router->generate("atualizar-produtoForm", ["produtoId" => $_POST['id']]));
       return;
@@ -113,6 +116,7 @@ class ProdutosController
       header("Location: /dashboard");
       return;
     } catch (\Exception $e) {
+      LogService::registrarErro($e);
       $_SESSION["mensagem_erro_flash"] = "Tivemos um erro. Tente novamente.";
       header("Location: " . $this->router->generate("dashboard"));
       return;
@@ -137,6 +141,7 @@ class ProdutosController
       header("Location: " . $this->router->generate("produtos-excluidos"));
       return;
     } catch (\Exception $e) {
+      LogService::registrarErro($e);
       $_SESSION["mensagem_erro_flash"] = "Tivemos um erro. Tente novamente.";
       header("Location: " . $this->router->generate("produtos-excluidos"));
       return;

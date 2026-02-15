@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use AltoRouter;
 use App\Repositories\ProdutosRepository;
+use App\Service\LogService;
 use App\Service\ProdutoService;
 
 class DashboardController
@@ -34,6 +35,7 @@ class DashboardController
       require __DIR__ . '/../Views/dashboard.php';
       return;
     }catch (\Exception $e){
+      LogService::registrarErro($e);
       echo 'Página não localizada'. PHP_EOL;
       return;
     }
@@ -61,6 +63,7 @@ class DashboardController
       require __DIR__ . '/../Views/cadastro-propriedade.php';
       return;
     } catch (\Exception $e) {
+      LogService::registrarErro($e);
       echo 'Página não localizada'. PHP_EOL;
       return;
     }
@@ -88,6 +91,7 @@ class DashboardController
       require __DIR__ . '/../Views/cadastro-produto.php';
       return;
     } catch (\Exception $e) {
+      LogService::registrarErro($e);
       echo 'Página não localizada'. PHP_EOL;
       return;
     }
@@ -121,6 +125,7 @@ class DashboardController
       require __DIR__ . '/../Views/atualizar-produto.php';
       return;
     } catch (\Exception $e) {
+      LogService::registrarErro($e);
       echo 'Página não localizada'. PHP_EOL;
       return;
     }
@@ -141,6 +146,7 @@ class DashboardController
       require __DIR__ . '/../Views/produtos-excluidos.php';
       return;
     } catch (\Exception $e) {
+      LogService::registrarErro($e);
       echo 'Página não localizada'. PHP_EOL;
       return;
     }

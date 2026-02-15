@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use AltoRouter;
 use App\Repositories\UserRepository;
+use App\Service\LogService;
 
 class LoginController
 {
@@ -38,6 +39,14 @@ class LoginController
 
       if (!$usuario || !password_verify($senha, $usuario['senha'])) {
         $_SESSION["mensagem_erro_flash"] = 'E-mail ou senha inválidos.';
+
+        $ipCliente = $_SERVER['REMOTE_ADDR'] ?? 'IP_DESCONHECIDO';
+        error_log(
+          "[" . date('Y-m-d H:i:s') . "] [WARNING] [IP: {$_SERVER['REMOTE_ADDR']}] [emailTentativa: $email]" . PHP_EOL,
+          3,
+          __DIR__ . '/../../src/logs/erro-acesso.log'
+        );
+
         header("Location: " . $this->router->generate('login'));
         return;
       }
@@ -52,6 +61,7 @@ class LoginController
       header("Location: " . $this->router->generate('dashboard'));
       return;
     } catch (\Exception $e) {
+      LogService::registrarErro($e);
       $_SESSION["mensagem_erro_flash"] = "Tivemos um erro. Tente novamente.";
       require __DIR__ . '/../Views/login.php';
       return;

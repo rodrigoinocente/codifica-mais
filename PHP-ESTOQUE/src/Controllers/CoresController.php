@@ -5,6 +5,7 @@ namespace App\Controllers;
 use AltoRouter;
 use App\Models\Cores;
 use App\Repositories\CoresRepository;
+use App\Service\LogService;
 
 class CoresController
 {
@@ -43,6 +44,7 @@ class CoresController
         header("Location: " . $this->router->generate("cadastro-propriedade"));
         return;
       } catch (\Exception $e) {
+        LogService::registrarErro($e);
         $_SESSION["mensagem_erro_flash"] = "Ocoreu um erro. Tente novamente mais tarde.";
         header("Location: " . $this->router->generate("cadastro-propriedade"));
         return;
@@ -66,6 +68,7 @@ class CoresController
         $_SESSION["mensagem_flash"] = "Cor excluida com sucesso.";
         header("Location: " . $this->router->generate("cadastro-propriedade"));
       } catch (\Exception $e) {
+        LogService::registrarErro($e);
         $_SESSION["mensagem_erro_flash"] = "Ocoreu um erro. Tente novamente mais tarde.";
         header("Location: " . $this->router->generate("cadastro-propriedade"));
           return;
@@ -90,6 +93,7 @@ class CoresController
         header("Location: " . $this->router->generate("cadastro-propriedade"));
         return;
       } catch (\Exception $e) {
+        LogService::registrarErro($e);
         $_SESSION["mensagem_erro_flash"] = "Ocoreu um erro. Tente novamente mais tarde.";
         header("Location: " . $this->router->generate("cadastro-propriedade"));
           return;

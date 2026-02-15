@@ -71,6 +71,14 @@ class Produtos
     }
 
     if ($this->quantidade <= 0) {
+      error_log(
+        "[" . date('Y-m-d H:i:s') . "] [VALIDATION_ERROR] " .
+        "[IP: {$_SERVER['REMOTE_ADDR']}] " .
+        "[User: {$_SESSION['usuario']['id']}] " .
+        "[Quantidade: $this->quantidade] " . PHP_EOL,
+        3,
+        __DIR__ . '/../../src/logs/validacao.log'
+      );
       return ['erro' => true, 'mensagem' => 'A quantidade não pode ser menor ou igual a 0.'];
     }
 
