@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<main>
+  <section id="novo_card" class="componente">
+    <h1>Novo Card</h1>
+    <form id="form" action="">
+      <label for="titulo">Título</label>
+      <input id="titulo" type="text">
+      
+      <label for="categoria">Categoria</label>
+      <select name="categoria" id="categoria">
+        <option value="">-- Selecione --</option>
+        <option value="Estudo">Estudo</option>
+        <option value="Trabalho">Trabalho</option>
+        <option value="Pessoal">Pessoal</option>
+      </select>
+      <label for="prioridade">Prioridade</label>
+      
+      <select name="prioridade" id="prioridade">
+        <option value="">-- Selecione --</option>
+        <option value="Alta">Alta</option>
+        <option value="Média">Média</option>
+        <option value="Baixa">Baixa</option>
+      </select>
+      
+      <label for="descricao">Descrição</label>
+      <textarea name="descricao" id="descricao" cols="20" rows="7"></textarea>
+      
+      <div id="botaoForm">
+        <button type="submit">Adicionar</button>
+        <button type="reset">Limpar formulário</button>
+      
+      </div>
+    </form>
+  </section>
+  
+  <section id="lista" class="componente">
+    <h2>Filtros</h2>
+    <div id="filtro">
+      
+      <div class="item_filtro">
+        <label for="filtroCategoria">Categoria:</label>
+        <select id="filtroCategoria">
+          <option value="">Todas</option>
+          <option value="estudo">Estudo</option>
+          <option value="trabalho">Trabalho</option>
+          <option value="pessoal">Pessoal</option>
+        </select>
+      </div>
+      
+      <div class="item_filtro">
+        <label for="filtroPrioridade">Prioridade:</label>
+        <select id="filtroPrioridade">
+          <option value="">Todas</option>
+          <option value="Alta">Alta</option>
+          <option value="Média">Média</option>
+          <option value="Baixa">Baixa</option>
+        </select>
+      </div>
+      
+      <div class="item_filtro">
+        <label for="ordenar">Ordenar por:</label>
+        <select id="ordenar">
+          <option value="">-- Selecione --</option>
+          <option value="recentes">Mais recentes</option>
+          <option value="antigos">Mais antigos</option>
+        </select>
+      </div>
+      
+      <button id="limparFiltros">Limpar filtros</button>
+    
+    </div>
+    
+    <div id="card_container" class="componente"></div>
+  </section>
+</main>
+</body>
+</html>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+  
+  * {
+    padding: 0;
+    margin: 0;
+  }
+  
+  html {
+    flex: 0;
+    height: auto;
+    background: linear-gradient(to bottom, #d1cece, #7a7a7a, #000000);
+  }
+  
+  main {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    gap: 2rem;
+    padding: 3rem 10rem;
+    background-color: #d1cece;
+    font-family: "Roboto", sans-serif;
+  }
+  
+  .componente {
+    background-color: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    height: fit-content;
+  }
+  
+  #novo_card {
+    width: 25%;
+  }
+  
+  #novo_card h1 {
+    margin-bottom: 1rem;
+  }
+  
+  #novo_card form label {
+    color: #6d6e73;
+  }
+  
+  #form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  #form input, select, textarea {
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    background-color: white;
+    padding: 10px 5px;
+    font-size: 1.1rem;
+  }
+  
+  #botaoForm {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    width: fit-content;
+    padding-top: 1rem;
+    margin: 0 auto;
+  }
+  
+  #botaoForm button {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    border: 1px solid #a7aebd;
+  }
+  
+  #botaoForm button:hover {
+    background-color: #bcbcbc;
+    color: white;
+    font-weight: bold;
+  }
+  
+  #lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 2;
+  }
+  
+  #filtro {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0.5rem;
+  }
+  
+  #filtro select {
+    padding: 4px 5px;
+  }
+  
+  .item_filtro {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .item_filtro label {
+    font-size: 1.2rem;
+    color: #6d6e73;
+  }
+  
+  .item_filtro select {
+    width: 200px;
+  }
+  
+  #limparFiltros {
+    height: fit-content;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #a7aebd;
+    cursor: pointer;
+  }
+  
+  #card_container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    min-height: 12rem;
+  }
+  
+  .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 8px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    padding: 8px 8px 15px 15px;
+    position: relative;
+  }
+  
+  .card h3 {
+    font-size: 1.2rem;
+    margin-top: 8px;
+  }
+  
+  .card details {
+    margin-top: 8px;
+    border-radius: 8px;
+  }
+  
+  .card summary {
+    cursor: pointer;
+    font-weight: bold;
+    margin: 8px 0;
+  }
+  
+  .card details p {
+    background: fixed;
+    background-color: #ffffff !important;
+    width: 80%;
+    border: 1px solid #6e6c6c;
+    border-radius: 8px;
+    padding: 8px;
+    position: absolute;
+    z-index: 10;
+    box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+  }
+  
+  
+  .card button {
+    width: fit-content;
+    background: none;
+    border: none;
+    position: absolute;
+    right: 8px;
+    padding: 5px 8px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1.01rem;
+  }
+  
+  .card button:hover {
+    background-color: #ef4444;
+    color: white;
+    font-weight: bold;
+  }
+
+</style>
+
+<script>
+  let cards = []
+  const cardForm = document.getElementById('form')
+  const cardContainer = document.getElementById('card_container')
+  const limparFiltrosBtn = document.getElementById('limparFiltros');
+  const filtroCategoria = document.getElementById('filtroCategoria');
+  const filtroPrioridade = document.getElementById('filtroPrioridade');
+  const ordenarSelect = document.getElementById('ordenar');
+  
+  
+  // Para desenvolvimento
+  // let cards = [
+  //     {
+  //         titulo: 'Teste',
+  //         categoria: 'Trabalho',
+  //         prioridade: 'Média',
+  //         descricao: 'csdcscd fdsvsdvsd ijcsdcoisdo oicjsodijcoisd soddcjosdijcoi cosidocijsodicosdjc oicjosidcoisdoc ocijsodico',
+  //         createdAt: 1771550221485
+  //     },
+  //     {
+  //         titulo: 'Teste1',
+  //         categoria: 'Estudo',
+  //         prioridade: 'Alta',
+  //         descricao: 'csdcscd',
+  //         createdAt: 1771550422191
+  //     },
+  //     {
+  //         titulo: 'Teste4',
+  //         categoria: 'Estudo',
+  //         prioridade: 'Alta',
+  //         descricao: 'csdcscd',
+  //         createdAt: 1771552456812
+  //     },
+  //     {
+  //         titulo: 'Teste5',
+  //         categoria: 'Estudo',
+  //         prioridade: 'Alta',
+  //         descricao: 'csdcscd',
+  //         createdAt: 1771553456812
+  //     },
+  //     {
+  //         titulo: 'Teste6',
+  //         categoria: 'Estudo',
+  //         prioridade: 'Baixa',
+  //         descricao: 'csdcscd',
+  //         createdAt: 1771551456812
+  //     },
+  //     {
+  //         titulo: 'Teste7',
+  //         categoria: 'Estudo',
+  //         prioridade: 'Baixa',
+  //         descricao: 'csdcscd',
+  //         createdAt: 1771554456812
+  //     },
+  //     {
+  //         titulo: 'Teste8',
+  //         categoria: 'Estudo',
+  //         prioridade: 'Média',
+  //         descricao: 'csdcscd',
+  //         createdAt: 1771550456812
+  //     },
+  //     {
+  //         titulo: 'Teste9',
+  //         categoria: 'Trabalho',
+  //         prioridade: 'Alta',
+  //         descricao: 'csdcscd',
+  //         createdAt: 1771551456812
+  //     },
+  //     {
+  //         titulo: 'Teste10',
+  //         categoria: 'Pessoal',
+  //         prioridade: 'Baixa',
+  //         descricao: 'csdcscd',
+  //         createdAt: 1771552456812
+  //     }
+  // ];
+  
+  filtroCategoria.addEventListener('change', () => renderizar());
+  filtroPrioridade.addEventListener('change', () => renderizar());
+  ordenarSelect.addEventListener('change', () => renderizar());
+  
+  renderizar();
+  
+  cardForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const titulo = cardForm.titulo.value.trim();
+    const categoria = cardForm.categoria.value.trim();
+    const prioridade = cardForm.prioridade.value.trim();
+    const descricao = cardForm.descricao.value;
+    let card = {
+      titulo,
+      categoria,
+      prioridade,
+      descricao,
+      createdAt: Date.now()
+    };
+    cards.unshift(card);
+    
+    cardForm.reset();
+    renderizar();
+  });
+  
+  function renderizar() {
+    cardContainer.innerHTML = '';
+    console.log(cards);
+    
+    let lista = [...cards];
+    
+    if (filtroCategoria.value) {
+      lista = lista.filter(card => card.categoria === filtroCategoria.value);
+    }
+    
+    if (filtroPrioridade.value) {
+      lista = lista.filter(card => card.prioridade === filtroPrioridade.value);
+    }
+    
+    if (ordenarSelect.value === 'recentes') {
+      lista.sort((a, b) => b.createdAt - a.createdAt);
+    }
+    
+    if (ordenarSelect.value === 'antigos') {
+      lista.sort((a, b) => a.createdAt - b.createdAt);
+    }
+    
+    lista.forEach((card) => {
+      cardContainer.innerHTML += `
+            <div class="card">
+                <h3>${card.titulo}</h3>
+                <p><strong class="proriedade">Categoria:</strong> ${card.categoria}</p>
+                <p><strong class="proriedade">Prioridade:</strong> ${card.prioridade}</p>
+                <details>
+                    <summary>Descrição</summary>
+                    <p>${card.descricao}</p>
+                </details>
+                <p>
+                  ${new Date(card.createdAt).toLocaleDateString()}
+                  ${new Date(card.createdAt).toLocaleTimeString()}
+                </p>
+                <button onclick="excluirCard(${card.createdAt})">
+                    X
+                </button>
+            </div>
+        `;
+    });
+  }
+  
+  limparFiltrosBtn.addEventListener('click', () => {
+    filtroCategoria.value = '';
+    filtroPrioridade.value = '';
+    ordenarSelect.value = '';
+    renderizar();
+  });
+  
+  function excluirCard(id) {
+    cards = cards.filter(card => card.createdAt !== id);
+    renderizar();
+  }
+</script>
