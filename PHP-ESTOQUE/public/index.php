@@ -1,4 +1,5 @@
 <?php
+ob_start();
 require __DIR__ . "/../vendor/autoload.php";
 session_start();
 date_default_timezone_set('America/Sao_Paulo');
@@ -21,6 +22,8 @@ if ($match) {
   $controller = new $classeController($router);
 
   call_user_func_array([$controller, $metodo], $match['params']);
+
+  ob_end_flush();
 } else {
   echo "Página não encontrada!";
 }
