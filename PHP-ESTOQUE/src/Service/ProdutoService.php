@@ -7,106 +7,138 @@ use App\Repositories\CategoriasRepository;
 use App\Repositories\CoresRepository;
 use App\Repositories\GenerosRepository;
 use App\Repositories\MarcasRepository;
+use App\Repositories\ProdutosRepository;
 use App\Repositories\SegmentosRepository;
 use App\Repositories\TamanhosRepository;
 use DomainException;
 
 class ProdutoService
 {
-  public function verificarDados($usuarioId)
-  {
-    $repoCategorias = new CategoriasRepository();
-    $categorias = $repoCategorias->buscarTodasPorUsuario($usuarioId);
-    $repoMarcas = new MarcasRepository();
-    $marcas = $repoMarcas->buscarTodasPorUsuario($usuarioId);
-    if (empty($marcas) || empty($categorias)) {
-      throw new DomainException("Para realizar um cadastro, é necessário ter pelo menos uma categoria
-       e uma marca registradas. Acesse Propriedades e faça o registro.");
-    }
-
-    $repoCores = new CoresRepository();
-    $cores = $repoCores->buscarTodasPorUsuario($usuarioId);
-
-    $repoTamanhos = new TamanhosRepository();
-    $tamanhos = $repoTamanhos->buscarTodasPorUsuario($usuarioId);
-    $tamanhosNumericos = [];
-    $tamanhosLetras = [];
-    foreach ($tamanhos as $tamanho) {
-      if (is_numeric($tamanho['nome'])) {
-        $tamanhosNumericos[] = $tamanho;
-      } else {
-        $tamanhosLetras[] = $tamanho;
-      }
-    }
-
-    $repoGenero = new GenerosRepository();
-    $generos = $repoGenero->buscarTodasPorUsuario($usuarioId);
-
-    $repoSegmentos = new SegmentosRepository();
-    $segmentos = $repoSegmentos->buscarTodasPorUsuario($usuarioId);
-
-    if (empty($cores) || empty($tamanhos) || empty($generos) || empty($segmentos)) {
-      throw new DomainException("Alguns dados essenciais (Cores, Tamanhos, Gêneros ou Segmentos) não foram localizados.");
-    }
-
-    return compact('categorias', 'marcas', 'cores', 'tamanhosNumericos', 'tamanhosLetras', 'tamanhos', 'generos', 'segmentos');
+  private ProdutosRepository $repoProduto;
+  private CategoriasRepository $repoCategorias;
+  private MarcasRepository $repoMarcas;
+  private CoresRepository $repoCores;
+  private TamanhosRepository $repoTamanhos;
+  private GenerosRepository $repoGenero;
+  private SegmentosRepository $repoSegmentos;
+  public function __construct() {
+    $this->repoCategorias = new CategoriasRepository();
+    $this->repoMarcas = new MarcasRepository();
+    $this->repoCores = new CoresRepository();
+    $this->repoTamanhos = new TamanhosRepository();
+    $this->repoGenero = new GenerosRepository();
+    $this->repoSegmentos = new SegmentosRepository();
+    $this->repoProduto = new ProdutosRepository();
   }
 
-  public function verificarTodosDados($usuarioId)
+  public function verificarDominioPropriedades(Produtos $produto, int $usuarioId): array
   {
-    $repoCategorias = new CategoriasRepository();
-    $categorias = $repoCategorias->buscaCompletaPorUsuario($usuarioId);
-    $repoMarcas = new MarcasRepository();
-    $marcas = $repoMarcas->buscaCompletaPorUsuario($usuarioId);
+    $categoria = $this->repoCategorias->existeIdCategoria($produto->categoria_id, $usuarioId);
+    $marca = $this->repoMarcas->existeIdMarca($produto->marca_id, $usuarioId);
+    $cor = $this->repoCores->existeIdCor($produto->cor_id,$usuarioId);
+    $tamanho = $this->repoTamanhos->existeIdTamanho($produto->tamanho_id, $usuarioId);
+    $genero = $this->repoGenero->existeIdGenero($produto->genero_id, $usuarioId);
+    $segmentos = $this->repoSegmentos->existeIdSegmento($produto->segmento_id, $usuarioId);
 
-    $repoCores = new CoresRepository();
-    $cores = $repoCores->buscaCompletaPorUsuario($usuarioId);
+    if (!$categoria || !$marca || !$cor || !$tamanho || !$genero || !$segmentos) {
+      return ['erro' => true, 'mensagem' => 'Tivemos erros ao tentar localizar as propriedades.'];
+    }
 
-    $repoTamanhos = new TamanhosRepository();
-    $tamanhos = $repoTamanhos->buscaCompletaPorUsuario($usuarioId);
+    return ['erro' => false, 'mensagem' => null];
+  }
 
-    $repoGenero = new GenerosRepository();
-    $generos = $repoGenero->buscaCompletaPorUsuario($usuarioId);
+  public function verificarDominioProduto(int $produtoId, int $usuarioId): array
+  {
+    $produto = $this->repoProduto->buscarPorId($produtoId, $usuarioId);
+    if (!$produto) {
+      return ['erro' => true, 'mensagem' => 'Produto não localizado.'];
+    }
 
-    $repoSegmentos = new SegmentosRepository();
-    $segmentos = $repoSegmentos->buscaCompletaPorUsuario($usuarioId);
+    return ['erro' => false, 'mensagem' => null];
+  }
 
+    public function getPropriedadesDisponiveis($usuarioId): array
+    {
+      $categorias = $this->repoCategorias->buscarTodasPorUsuario($usuarioId);
+      $marcas = $this->repoMarcas->buscarTodasPorUsuario($usuarioId);
+
+      if (empty($marcas) || empty($categorias)) {
+        return ['erro' => true, 'mensagem' => 'Para realizar um cadastro, é necessário ter pelo menos uma categoria
+         e uma marca registradas. Acesse Propriedades e faça o registro.'];
+      }
+
+      $cores = $this->repoCores->buscarTodasPorUsuario($usuarioId);
+      $generos = $this->repoGenero->buscarTodasPorUsuario($usuarioId);
+      $segmentos = $this->repoSegmentos->buscarTodasPorUsuario($usuarioId);
+      $tamanhos = $this->repoTamanhos->buscarTodasPorUsuario($usuarioId);
+
+      if (empty($cores) || empty($tamanhos) || empty($generos) || empty($segmentos)) {
+        return ['erro' => true, 'mensagem' => 'Alguns dados essenciais (Cores, Tamanhos, Gêneros ou Segmentos) não foram localizados.'];
+      }
+
+      $tamanhosNumericos = [];
+      $tamanhosLetras = [];
+      foreach ($tamanhos as $tamanho) {
+        if (is_numeric($tamanho['nome'])) {
+          $tamanhosNumericos[] = $tamanho;
+        } else {
+          $tamanhosLetras[] = $tamanho;
+        }
+      }
+
+      return compact(
+        'categorias',
+        'marcas',
+        'cores',
+        'tamanhosNumericos',
+        'tamanhosLetras',
+        'tamanhos',
+        'generos',
+        'segmentos'
+      );
+    }
+
+  public function getTodasPropriedades($usuarioId): array
+  {
+    $categorias = $this->repoCategorias->getTodasPorUsuario($usuarioId);
+    $marcas = $this->repoMarcas->getTodasPorUsuario($usuarioId);
+    $cores = $this->repoCores->getTodasPorUsuario($usuarioId);
+    $tamanhos = $this->repoTamanhos->getTodasPorUsuario($usuarioId);
+    $generos = $this->repoGenero->getTodasPorUsuario($usuarioId);
+    $segmentos = $this->repoSegmentos->getTodasPorUsuario($usuarioId);
     if (empty($cores) || empty($tamanhos) || empty($generos) || empty($segmentos)) {
-      throw new DomainException("Alguns dados essenciais (Cores, Tamanhos, Gêneros ou Segmentos) não foram localizados.");
+      return ['erro' => true, 'mensagem' => 'Alguns dados essenciais (Cores, Tamanhos, Gêneros ou Segmentos) não foram localizados.'];
     }
   
     return compact('categorias', 'marcas', 'cores', 'tamanhos', 'generos', 'segmentos');
   }
 
-  public function validarProduto(Produtos $produto, int $usuarioId)
-  {
-    $repoCategoria = new CategoriasRepository();
-    if (!$repoCategoria->existeIdCategoria($produto->categoria_id, $usuarioId)) {
-      throw new \Exception("Categoria não localizada.");
-    }
+    public function validarPropriedades(Produtos $produto, int $usuarioId): array
+    {
+      if (!$this->repoCategorias->existeIdCategoria($produto->categoria_id, $usuarioId)) {
+        return ['erro' => true, 'mensagem' => 'Categoria não localizada.'];
+      }
 
-    $repoMarca = new MarcasRepository();
-    if (!$repoMarca->existeIdMarca($produto->marca_id, $usuarioId)) {
-      throw new \Exception("Marca não localizada.");
-    }
+      if (!$this->repoMarcas->existeIdMarca($produto->marca_id, $usuarioId)) {
+        return ['erro' => true, 'mensagem' => 'Marca não localizada.'];
+      }
 
-    $repoCor = new CoresRepository();
-    if (!$repoCor->existeIdCor($produto->cor_id, $usuarioId)) {
-      throw new \Exception("Cor não localizada.");
-    }
+      if (!$this->repoCores->existeIdCor($produto->cor_id, $usuarioId)) {
+        return ['erro' => true, 'mensagem' => 'Cor não localizada.'];
+      }
 
-    $repoTamanho = new TamanhosRepository();
-    if (!$repoTamanho->existeIdTamanho($produto->tamanho_id, $usuarioId)) {
-      throw new \Exception("Tamanho não localizada.");
-    }
+      if (!$this->repoTamanhos->existeIdTamanho($produto->tamanho_id, $usuarioId)) {
+        return ['erro' => true, 'mensagem' => 'Tamanho não localizado.'];
+      }
 
-    $repoGenero = new GenerosRepository();
-    if (!$repoGenero->existeIdGenero($produto->genero_id, $usuarioId)) {
-      throw new \Exception("Gênero não localizado.");
+      if (!$this->repoGenero->existeIdGenero($produto->genero_id, $usuarioId)) {
+        return ['erro' => true, 'mensagem' => 'Gênero não localizado.'];
+      }
+
+      if (!$this->repoSegmentos->existeIdSegmento($produto->segmento_id, $usuarioId)) {
+        return ['erro' => true, 'mensagem' => 'Segmento não localizado.'];
+      }
+
+      return ['erro' => false, 'mensagem' => null];
     }
-    $repoSegmento = new SegmentosRepository();
-    if (!$repoSegmento->existeIdSegmento($produto->segmento_id, $usuarioId)) {
-      throw new \Exception("Marca não localizada.");
-    }
-  }
 }

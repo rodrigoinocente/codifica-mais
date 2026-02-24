@@ -4,120 +4,151 @@ namespace App\Controllers;
 
 use AltoRouter;
 use App\Repositories\ProdutosRepository;
+use App\Service\LogService;
 use App\Service\ProdutoService;
-use eftec\bladeone\BladeOne;
 
 class DashboardController
 {
-    private $router;
+  private AltoRouter $router;
+  private ProdutosRepository $repoProdutos;
+  private ProdutoService $serviceProdutos;
 
-    public function __construct(AltoRouter $router)
-    {
-        $this->router = $router;
+  public function __construct(AltoRouter $router)
+  {
+    $this->router = $router;
+    $this->repoProdutos = new ProdutosRepository();
+    $this->serviceProdutos = new ProdutoService();
+  }
+  public function index(): void
+  {
+    try {
+      $usuarioId = $_SESSION['usuario']['id'];
+
+      $erro = $_SESSION["mensagem_erro_flash"] ?? null;
+      unset($_SESSION["mensagem_erro_flash"]);
+
+      $mensagem = $_SESSION["mensagem_flash"] ?? null;
+      unset($_SESSION["mensagem_flash"]);
+
+      $produtos = $this->repoProdutos->buscarProdutos($usuarioId);
+
+      require __DIR__ . '/../Views/dashboard.php';
+      return;
+    }catch (\Exception $e){
+      LogService::registrarErro($e);
+      echo 'Página não localizada'. PHP_EOL;
+      return;
     }
+  }
 
-    public function index()
-    {
-        $erro = $_SESSION["mensagem_erro_flash"] ?? null;
-        unset($_SESSION["mensagem_erro_flash"]);
+  public function cadastroPropriedade(): void
+  {
+    try {
+      $usuarioId = $_SESSION['usuario']['id'];
 
-        $mensagem = $_SESSION["mensagem_flash"] ?? null;
-        unset($_SESSION["mensagem_flash"]);
+      $dados = $this->serviceProdutos->getTodasPropriedades($usuarioId);
+      if ($dados['erro']) {
+        echo 'Página não localizada'. PHP_EOL;
+        return;
+      }
 
-        $repoProduto = new ProdutosRepository();
-        $produtos = $repoProduto->buscarProdutos($_SESSION['usuario']['id']);
+      extract($dados);
 
-        require __DIR__ . '/../Views/dashboard.php';
+      $erro = $_SESSION["mensagem_erro_flash"] ?? null;
+      unset($_SESSION["mensagem_erro_flash"]);
+
+      $mensagem = $_SESSION["mensagem_flash"] ?? null;
+      unset($_SESSION["mensagem_flash"]);
+
+      require __DIR__ . '/../Views/cadastro-propriedade.php';
+      return;
+    } catch (\Exception $e) {
+      LogService::registrarErro($e);
+      echo 'Página não localizada'. PHP_EOL;
+      return;
     }
+  }
 
-    public function cadastroPropriedade()
-    {
-        try {
-            $usuarioId = $_SESSION['usuario']['id'];
-            $serviceProduto = new ProdutoService();
-            $dados = $serviceProduto->verificarTodosDados($usuarioId);
-            extract($dados);
+  public function cadastroProduto(): void
+  {
+    try {
+      $usuarioId = $_SESSION['usuario']['id'];
 
-            $erro = $_SESSION["mensagem_erro_flash"] ?? null;
-            unset($_SESSION["mensagem_erro_flash"]);
+      $dados = $this->serviceProdutos->getPropriedadesDisponiveis($usuarioId);
+      if ($dados['erro']) {
+        $_SESSION["mensagem_erro_flash"] = $dados['mensagem'];;
+        header("Location: " . $this->router->generate('dashboard'));
+        return;
+      }
+      extract($dados);
 
-            $mensagem = $_SESSION["mensagem_flash"] ?? null;
-            unset($_SESSION["mensagem_flash"]);
-            require __DIR__ . '/../Views/cadastro-propriedade.php';
-        } catch (\Throwable $th) {
-            $_SESSION["mensagem_erro_flash"] = $e->getMessage();
-            header("Location: " . $this->router->generate("cadastro-propriedade"));
-            return;
-        }
+      $erro = $_SESSION["mensagem_erro_flash"] ?? null;
+      unset($_SESSION["mensagem_erro_flash"]);
+
+      $mensagem = $_SESSION["mensagem_flash"] ?? null;
+      unset($_SESSION["mensagem_flash"]);
+
+      require __DIR__ . '/../Views/cadastro-produto.php';
+      return;
+    } catch (\Exception $e) {
+      LogService::registrarErro($e);
+      echo 'Página não localizada'. PHP_EOL;
+      return;
     }
+  }
 
-    public function cadastroProduto()
-    {
-        try {
-            $usuarioId = $_SESSION['usuario']['id'];
+  public function atualizarProdutoForm($produtoId): void
+  {
+    try {
+      $usuarioId = $_SESSION['usuario']['id'];
+      $produto = $this->repoProdutos->buscarPorId((int)$produtoId, $usuarioId);
+      if (!$produto) {
+        $_SESSION["mensagem_erro_flash"] = "Produto não encontrado";;
+        header("Location: " . $this->router->generate('dashboard'));
+        return;
+      }
 
-            $serviceProduto = new ProdutoService();
-            $dados = $serviceProduto->verificarDados($usuarioId);
-            extract($dados);
+      $dados = $this->serviceProdutos->getPropriedadesDisponiveis($usuarioId);
+      if ($dados['erro']) {
+        $_SESSION["mensagem_erro_flash"] = $dados['mensagem'];
+        header("Location: " . $this->router->generate('dashboard'));
+        return;
+      }
+      extract($dados);
 
-            $erro = $_SESSION["mensagem_erro_flash"] ?? null;
-            unset($_SESSION["mensagem_erro_flash"]);
+      $erro = $_SESSION["mensagem_erro_flash"] ?? null;
+      unset($_SESSION["mensagem_erro_flash"]);
 
-            $mensagem = $_SESSION["mensagem_flash"] ?? null;
-            unset($_SESSION["mensagem_flash"]);
-            require __DIR__ . '/../Views/cadastro-produto.php';
-        } catch (\Exception $e) {
-            $_SESSION["mensagem_erro_flash"] = $e->getMessage();
-            header("Location: " . $this->router->generate("dashboard"));
-            return;
-        }
+      $mensagem = $_SESSION["mensagem_flash"] ?? null;
+      unset($_SESSION["mensagem_flash"]);
+
+      require __DIR__ . '/../Views/atualizar-produto.php';
+      return;
+    } catch (\Exception $e) {
+      LogService::registrarErro($e);
+      echo 'Página não localizada'. PHP_EOL;
+      return;
     }
+  }
 
+  public function produtosExcluidos(): void
+  {
+    try {
+      $usuarioId = $_SESSION['usuario']['id'];
+      $produtos = $this->repoProdutos->buscarProdutosExcluidos($usuarioId);
 
-    public function atualizarProdutoForm($produtoId)
-    {
-        $usuarioId = $_SESSION['usuario']['id'];
+      $erro = $_SESSION["mensagem_erro_flash"] ?? null;
+      unset($_SESSION["mensagem_erro_flash"]);
 
-        $repoProdutos = new ProdutosRepository();
-        $produto = $repoProdutos->buscarPorId((int)$produtoId, $usuarioId);
-        if (!$produto) {
-            $_SESSION['mensagem_erro_flash'] = "Produto não encontrado.";
-            header("Location: /dashboard/produtos");
-            return;
-        }
+      $mensagem = $_SESSION["mensagem_flash"] ?? null;
+      unset($_SESSION["mensagem_flash"]);
 
-        $serviceProduto = new ProdutoService();
-        $dados = $serviceProduto->verificarDados($usuarioId);
-        extract($dados);
-
-        $erro = $_SESSION["mensagem_erro_flash"] ?? null;
-        unset($_SESSION["mensagem_erro_flash"]);
-
-        $mensagem = $_SESSION["mensagem_flash"] ?? null;
-        unset($_SESSION["mensagem_flash"]);
-
-        require __DIR__ . '/../Views/atualizar-produto.php';
+      require __DIR__ . '/../Views/produtos-excluidos.php';
+      return;
+    } catch (\Exception $e) {
+      LogService::registrarErro($e);
+      echo 'Página não localizada'. PHP_EOL;
+      return;
     }
-
-    public function produtosExcluidos()
-    {
-        try {
-            $usuarioId = $_SESSION['usuario']['id'];
-
-            $repoProduto = new ProdutosRepository();
-            $produtos = $repoProduto->buscarProdutosExcluidos($usuarioId);
-
-            $erro = $_SESSION["mensagem_erro_flash"] ?? null;
-            unset($_SESSION["mensagem_erro_flash"]);
-
-            $mensagem = $_SESSION["mensagem_flash"] ?? null;
-            unset($_SESSION["mensagem_flash"]);
-
-            require __DIR__ . '/../Views/produtos-excluidos.php';
-        } catch (\Throwable $e) {
-            $_SESSION["mensagem_erro_flash"] = $e->getMessage();
-            header("Location: " . $this->router->generate("cadastro-propriedade"));
-            return;
-        }
-    }
+  }
 }

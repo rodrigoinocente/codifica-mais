@@ -1,0 +1,8 @@
+[2026-02-16 15:11:35] [CRITICAL_ERROR] [USER: 2] [METODO: POST] [ROTA: /dashboard/cadastrar-produto]
+MESSAGE: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'INSER INTO produtos (
+      usuario_id, 
+      marca_id, 
+      cor_id, 
+      c' at line 1
+FILE: /home/dev/Trabalho/codifica-mais/PHP-ESTOQUE/src/Repositories/ProdutosRepository.php (Linha: 80)
+--------------------------------------------------------------------------------

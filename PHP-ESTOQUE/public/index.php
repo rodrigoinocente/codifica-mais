@@ -1,8 +1,9 @@
 <?php
+ob_start();
 require __DIR__ . "/../vendor/autoload.php";
 session_start();
+date_default_timezone_set('America/Sao_Paulo');
 
-use AltoRouter;
 use App\Middlewares\AuthMiddleware;
 
 $router = new AltoRouter();
@@ -11,16 +12,18 @@ require __DIR__ . "/../src/Routes/web.php";
 
 $match = $router->match();
 if ($match) {
-    $rotasProtegidas = ["dashboard"];
-    if (in_array($match["name"], $rotasProtegidas)) {
-        AuthMiddleware::verificacao($router);
-    }
+  $rotasProtegidas = ["dashboard"];
+  if (in_array($match["name"], $rotasProtegidas)) {
+      AuthMiddleware::verificacao($router);
+  }
 
-    [$controller, $metodo] = explode("@", $match["target"]);
-    $classeController = "App\\Controllers\\" . $controller;
-    $controller = new $classeController($router);
-    
-    call_user_func_array([$controller, $metodo], $match['params']);
+  [$controller, $metodo] = explode("@", $match["target"]);
+  $classeController = "App\\Controllers\\" . $controller;
+  $controller = new $classeController($router);
+
+  call_user_func_array([$controller, $metodo], $match['params']);
+
+  ob_end_flush();
 } else {
-    echo "Página não encontrada!";
+  echo "Página não encontrada!";
 }

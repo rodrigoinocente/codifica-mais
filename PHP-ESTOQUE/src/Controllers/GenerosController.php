@@ -5,72 +5,100 @@ namespace App\Controllers;
 use AltoRouter;
 use App\Models\Generos;
 use App\Repositories\GenerosRepository;
+use App\Service\LogService;
 
 class GenerosController
 {
-    private $router;
+  private AltoRouter $router;
+  private GenerosRepository $repoGeneros;
 
-    public function __construct(AltoRouter $router)
-    {
-        $this->router = $router;
+  public function __construct(AltoRouter $router)
+  {
+    $this->router = $router;
+    $this->repoGeneros = new GenerosRepository();
+  }
+
+  public function cadastrar(): void
+  {
+    try {
+      $nome = $_POST["nome"] ?? null;
+      $usuarioId = $_SESSION['usuario']['id'];
+
+      $genero = new Generos($usuarioId, $nome);
+      $corValida = $genero->ehvalido();
+      if ($corValida['erro']) {
+        $_SESSION["mensagem_erro_flash"] = $corValida['mensagem'];
+        header("Location: " . $this->router->generate("cadastro-propriedade"));
+        return;
+      }
+
+      $nomeExiste = $this->repoGeneros->existeNomeGenero($genero->nome, $genero->usuario_id);
+      if ($nomeExiste) {
+        $_SESSION["mensagem_erro_flash"] = 'Já exite um nome com esse nome';
+        header("Location: " . $this->router->generate("cadastro-propriedade"));
+        return;
+      }
+
+      $this->repoGeneros->salvar($genero);
+
+      $_SESSION["mensagem_flash"] = "Gênero cadastrado com sucesso.";
+      header("Location: " . $this->router->generate("cadastro-propriedade"));
+      return;
+    } catch (\Exception $e) {
+      LogService::registrarErro($e);
+      $_SESSION["mensagem_erro_flash"] = "Ocoreu um erro. Tente novamente mais tarde.";
+      header("Location: " . $this->router->generate("cadastro-propriedade"));
+      return;
     }
+  }
 
-    public function cadastrar()
-    {
-        try {
-            $nome = $_POST["nome"] ?? null;
-            $usuarioId = $_SESSION['usuario']['id'];
+  public function excluir($generoId): void
+  {
+    try {
+      $usuarioId = $_SESSION['usuario']['id'];
 
-            $genero = new Generos($usuarioId, $nome);
-            $genero->ehvalido();
-            $repoGeneros = new GenerosRepository();
+      $genero = $this->repoGeneros->existeIdGenero((int) $generoId, $usuarioId);
+      if (!$genero) {
+        $_SESSION["mensagem_erro_flash"] = 'Gênero não localizado';
+        header("Location: " . $this->router->generate("cadastro-propriedade"));
+        return;
+      }
 
-            if ($repoGeneros->existeNomeGenero($genero->nome, $genero->usuario_id)) {
-                throw new \Exception("Gênero $genero->nome já está cadastrado.");
-            }
+      $this->repoGeneros->excluirGenero((int) $generoId, $usuarioId);
 
-            $repoGeneros->salvar($genero);
-
-            $_SESSION["mensagem_flash"] = "Gênero cadastrado com sucesso.";
-            header("Location: " . $this->router->generate("cadastro-propriedade"));
-        } catch (\Exception $e) {
-            $_SESSION["mensagem_erro_flash"] = $e->getMessage();
-            header("Location: " . $this->router->generate("cadastro-propriedade"));
-            return;
-        }
+      $_SESSION["mensagem_flash"] = "Gênero excluido com sucesso.";
+      header("Location: " . $this->router->generate("cadastro-propriedade"));
+      return;
+    } catch (\Exception $e) {
+      LogService::registrarErro($e);
+      $_SESSION["mensagem_erro_flash"] = "Ocoreu um erro. Tente novamente mais tarde.";
+      header("Location: " . $this->router->generate("cadastro-propriedade"));
+      return;
     }
+  }
 
-    public function excluir($generoId)
-    {
-        try {
-            $usuarioId = $_SESSION['usuario']['id'];
-            $repoGenero = new GenerosRepository();
-            $repoGenero->existeIdGenero((int) $generoId, $usuarioId);
-            $repoGenero->excluirGenero((int) $generoId, $usuarioId);
+  public function recuperar($generoId): void
+  {
+    try {
+      $usuarioId = $_SESSION['usuario']['id'];
+      $genero = $this->repoGeneros->existeIdGenero((int) $generoId, $usuarioId);
 
-            $_SESSION["mensagem_flash"] = "Gênero excluido com sucesso.";
-            header("Location: " . $this->router->generate("cadastro-propriedade"));
-        } catch (\Exception $e) {
-            $_SESSION["mensagem_erro_flash"] = $e->getMessage();
-            header("Location: " . $this->router->generate("cadastro-propriedade"));
-            return;
-        }
+      if (!$genero) {
+        $_SESSION["mensagem_erro_flash"] = 'Gênero não localizado';
+        header("Location: " . $this->router->generate("cadastro-propriedade"));
+        return;
+      }
+
+      $this->repoGeneros->recuperarGenero((int) $generoId, $usuarioId);
+
+      $_SESSION["mensagem_flash"] = "Gênero recuperado com sucesso.";
+      header("Location: " . $this->router->generate("cadastro-propriedade"));
+      return;
+    } catch (\Exception $e) {
+      LogService::registrarErro($e);
+      $_SESSION["mensagem_erro_flash"] = "Ocoreu um erro. Tente novamente mais tarde.";
+      header("Location: " . $this->router->generate("cadastro-propriedade"));
+      return;
     }
-
-    public function recuperar($generoId)
-    {
-        try {
-            $usuarioId = $_SESSION['usuario']['id'];
-            $repoGenero = new GenerosRepository();
-            $repoGenero->existeIdGenero((int) $generoId, $usuarioId);
-            $repoGenero->repucperarGenero((int) $generoId, $usuarioId);
-
-            $_SESSION["mensagem_flash"] = "Gênero recuperado com sucesso.";
-            header("Location: " . $this->router->generate("cadastro-propriedade"));
-        } catch (\Exception $e) {
-            $_SESSION["mensagem_erro_flash"] = $e->getMessage();
-            header("Location: " . $this->router->generate("cadastro-propriedade"));
-            return;
-        }
-    }
+  }
 }

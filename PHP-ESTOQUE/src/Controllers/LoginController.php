@@ -4,65 +4,79 @@ namespace App\Controllers;
 
 use AltoRouter;
 use App\Repositories\UserRepository;
+use App\Service\LogService;
 
 class LoginController
 {
-    private $router;
+  private AltoRouter $router;
+  private UserRepository $repoUsuario;
 
-    public function __construct(AltoRouter $router)
-    {
-        $this->router = $router;
-    }
+  public function __construct(AltoRouter $router)
+  {
+    $this->router = $router;
+    $this->repoUsuario = new UserRepository();
+  }
 
-    public function index()
-    {
-        $erro = $_SESSION["mensagem_erro_flash"] ?? null;
-        unset($_SESSION["mensagem_erro_flash"]);
+  public function index(): void
+  {
+    $erro = $_SESSION["mensagem_erro_flash"] ?? null;
+    unset($_SESSION["mensagem_erro_flash"]);
 
-        $mensagem = $_SESSION["mensagem_flash"] ?? null;
-        unset($_SESSION["mensagem_flash"]);
+    $mensagem = $_SESSION["mensagem_flash"] ?? null;
+    unset($_SESSION["mensagem_flash"]);
 
-        require __DIR__ . '/../Views/login.php';
-    }
+    require __DIR__ . '/../Views/login.php';
+    return;
+  }
 
-    public function logar()
-    {
-        try {
-            $email = $_POST["email"] ?? "";
-            $senha = $_POST["senha"] ?? "";
+  public function logar(): void
+  {
+    try {
+      $email = $_POST["email"] ?? "";
+      $senha = $_POST["senha"] ?? "";
 
-            $repo = new UserRepository();
-            $usuario = $repo->buscarUsuarioPorEmail($email);
-            if (!$usuario || !password_verify($senha, $usuario->senha)) {
-                throw new \Exception("E-mail ou senha inválidos.");
-            }
+      $usuario = $this->repoUsuario->buscarUsuarioPorEmail($email);
 
-            session_start();
-            $_SESSION["usuario"] = [
-                "id"    => $usuario->id,
-                "nome"  => $usuario->nome,
-                "email" => $usuario->email
-            ];
+      if (!$usuario || !password_verify($senha, $usuario['senha'])) {
+        $_SESSION["mensagem_erro_flash"] = 'E-mail ou senha inválidos.';
 
-            $_SESSION["mensagem_flash"] = "Boas Vindas, $usuario->nome";
-            header("Location: " . $this->router->generate('dashboard'));
-        } catch (\Exception $e) {
-            $_SESSION["mensagem_erro_flash"] = $e->getMessage();
-            header("Location: " . $this->router->generate("cadastro"));
-
-            require __DIR__ . '/../Views/login.php';
-        }
-    }
-
-    public function sair()
-    {
-        $_SESSION = [];
-        session_destroy();
-
-        session_start();
-        $_SESSION["mensagem_flash"] = "Você saiu do sistema com sucesso. Volte sempre!";
+        $ipCliente = $_SERVER['REMOTE_ADDR'] ?? 'IP_DESCONHECIDO';
+        error_log(
+          "[" . date('Y-m-d H:i:s') . "] [WARNING] [IP: {$_SERVER['REMOTE_ADDR']}] [emailTentativa: $email]" . PHP_EOL,
+          3,
+          __DIR__ . '/../../src/logs/erro-acesso.log'
+        );
 
         header("Location: " . $this->router->generate('login'));
-        exit;
+        return;
+      }
+
+      $_SESSION["usuario"] = [
+        "id"    => $usuario['id'],
+        "nome"  => $usuario['nome'],
+        "email" => $usuario['email']
+      ];
+
+      $_SESSION["mensagem_flash"] = "Boas Vindas, {$usuario['nome']}";
+      header("Location: " . $this->router->generate('dashboard'));
+      return;
+    } catch (\Exception $e) {
+      LogService::registrarErro($e);
+      $_SESSION["mensagem_erro_flash"] = "Tivemos um erro. Tente novamente.";
+      require __DIR__ . '/../Views/login.php';
+      return;
     }
+  }
+
+  public function sair(): void
+  {
+    $_SESSION = [];
+    session_destroy();
+
+    session_start();
+    $_SESSION["mensagem_flash"] = "Você saiu do sistema com sucesso. Volte sempre!";
+
+    header("Location: " . $this->router->generate('login'));
+    return;
+  }
 }
