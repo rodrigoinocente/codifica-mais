@@ -1,0 +1,34 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class MarcasSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        DB::table('marcas')->insert([
+            [
+                'nome' => 'Nike',
+                'is_sistema' => true,
+                'created_at' => now(),
+            ],
+            [
+                'nome' => 'Adidas',
+                'is_sistema' => true,
+                'created_at' => now(),
+            ],
+            [
+                'nome' => 'Puma',
+                'is_sistema' => true,
+                'created_at' => now(),
+            ],
+        ]);
+    }
+}
